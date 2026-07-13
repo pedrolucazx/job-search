@@ -17,6 +17,13 @@ works for any track (backend, frontend, mobile, IoT, data...) and any coding
 agent with file + shell access (Claude Code, Codex, OpenCode, Cursor, Cline,
 or even a plain chat without tool-use for the manual path).
 
+> ⚠️ **Only the search is automated. Applying is always manual.** The
+> pipeline finds jobs, scores fit, and generates the CV — it never submits
+> anything to a job board or company on your behalf, and never will. At the
+> end of `/apply-batch` and `/compile-today` you get a URL; **you** open it,
+> fill out the form, and upload the CV yourself. No auto-apply, no bot
+> submitting on your account, ever.
+
 > This repo is a working instance for one person's job search. The generic
 > engine (`AGENTS.md`, `rules/`, `workflows/`, `profile/`) is in English so
 > any dev can reuse it. The day-to-day command files (`CLAUDE.md`,
@@ -43,6 +50,9 @@ order — nothing else to read first:
 - [ ] Install the search CLIs (step 2 in "Getting started" below)
 - [ ] Open your coding agent (Claude Code, Codex, OpenCode...) in this
       folder and type `/daily`
+- [ ] When you get a compiled CV and a URL: **open the URL yourself and
+      submit it by hand** — this tool never applies for you, see the
+      warning above
 
 That's it — the agent takes it from there and tells you what to do next at
 every step.
@@ -50,14 +60,18 @@ every step.
 ## How it works
 
 ```
- /daily              /apply-batch <n>        /compile-today          /confirm <n>
-    │                      │                       │                      │
-    ▼                      ▼                       ▼                      ▼
- Search jobs          Generate LaTeX CV      Compile → PDF          Register in
- (LinkedIn+freehire)  for chosen job         ATS check, archive     tracker (Notion/
- Rank by fit          (gate: deal-breaker                            CSV/none)
+ /daily              /apply-batch <n>        /compile-today       👤 YOU APPLY        /confirm <n>
+    │                      │                       │               MANUALLY               │
+    ▼                      ▼                       ▼           (open URL, fill form,       ▼
+ Search jobs          Generate LaTeX CV      Compile → PDF       upload CV yourself)   Register in
+ (LinkedIn+freehire)  for chosen job         ATS check, archive                        tracker (Notion/
+ Rank by fit          (gate: deal-breaker                                               CSV/none)
                        + score ≥60%)
 ```
+
+Everything left of "👤 YOU APPLY" is automated. Everything from there on is
+you, by hand, on the job board's own site — the pipeline only hands you the
+URL and a ready CV.
 
 Every step reads `profile/candidate.yaml` (your data) + `rules/` (universal
 CV/fit/ATS rules) — nothing hardcoded in the engine. See [AGENTS.md](AGENTS.md)

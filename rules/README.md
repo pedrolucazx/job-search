@@ -34,6 +34,13 @@ at the repo root for where to start).
    skills and job requirements** — never by a fixed niche vocabulary (the
    engine doesn't assume "fintech" or any other domain; that's each dev's
    own `preferences.target_industries`).
+9. **NEVER submit a job application.** No filling out or submitting a form
+   on a job board, no uploading the CV on the candidate's behalf, no
+   automating that step even if a browser/MCP tool used elsewhere in this
+   pipeline (e.g. to fetch a job description) technically could. Only the
+   search, evaluation, and CV generation are automated — submitting is
+   always the human candidate's own manual action. `apply-batch.md` and
+   `compile.md` end by handing over a URL and a compiled CV; stop there.
 
 ## Robustness for free/weaker models
 

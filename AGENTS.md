@@ -9,6 +9,15 @@ Cline, OpenCode, or a chat without tool-use for the manual path) — as long
 as it has file + shell access for full automation. Nothing here depends on
 any tool's proprietary format.
 
+> ⚠️ **Only the search is automated. Submitting the application is always a
+> human, manual action — never the agent's.** This applies even if the
+> agent has browser automation available (e.g. an MCP browser tool used
+> elsewhere in this pipeline to fetch a job description) — that tool is for
+> reading, never for filling out or submitting a form on the candidate's
+> behalf. `workflows/apply-batch.md` and `workflows/compile.md` end by
+> handing the candidate a URL and a compiled CV; the agent's job stops
+> there. See Absolute Rule below.
+
 ## Where to start
 
 1. **`rules/README.md`** — absolute rules and rule index (universal, no
