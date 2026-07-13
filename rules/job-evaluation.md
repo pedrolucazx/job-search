@@ -57,17 +57,23 @@ If `preferences.deal_breakers` includes something about work arrangement
 description before applying the exclusion** — search tags (`--remote
 remote` etc.) aren't reliable, platforms have mislabeled jobs before.
 
-If `preferences.deal_breakers` includes an education-completion requirement
-(a specific degree the candidate hasn't finished yet), watch for it even
-when the job description only lists it softly (e.g. "ensino superior" or
-"upper education degree" under "additional requirements", not flagged as
-mandatory). Some application platforms (Gupy in particular) ask this as a
-**hidden eliminatory screening question** in the application form itself —
-invisible when just reading the posting's text — and auto-reject on the
-spot before a human ever sees the CV. If the JD mentions any degree
-requirement at all and the candidate's `education` doesn't have a matching
-`status: "completed"` entry, treat it as a likely deal breaker and flag it
-clearly, even without 100% certainty from the text alone.
+## Education Completion Requirement (flag, don't exclude)
+
+If the JD mentions a degree requirement (e.g. "ensino superior", "upper
+education degree", "tecnólogo completo") and the candidate's `education`
+doesn't have a matching `status: "completed"` entry for it, **this is not a
+deal breaker** — don't drop the job from the table. Add a note to the gap
+table instead (e.g. `| Ensino superior completo | partial/absent | job
+lists it, candidate's degree is in progress |`).
+
+The reason it's a note and not an exclusion: some platforms genuinely don't
+enforce it (soft requirement, common in BR postings), while others (Gupy
+especially) ask it as a **hidden eliminatory screening question** in the
+application form itself — invisible when just reading the posting's text —
+and auto-reject on the spot before a human ever sees the CV (confirmed
+2026-07-13 with Pecege). There's no way to know which case it is from the
+job description alone, so let the candidate decide per job instead of
+guessing wrong in either direction.
 
 ## Seniority Mismatch
 
