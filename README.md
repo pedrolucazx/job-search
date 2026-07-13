@@ -123,4 +123,5 @@ Covers `scripts/validate_profile.py` and `scripts/track_append.py` (stdlib
 ## Credits
 
 The job search CLIs (`.agents/skills/linkedin-search/`, `.agents/skills/freehire-search/`)
-were adapted from parts of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search) (not a fork).
+were adapted from parts of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search)
+(not a fork) — including the choice of running them on Bun.

@@ -12,8 +12,10 @@
 *.fls
 *.fdb_latexmk
 
-# Personal documents (CVs, applications, etc.)
-documents/
+# Personal documents (CVs, applications, etc.) — README.md is the exception,
+# it's just structure documentation, not personal data
+documents/*
+!documents/README.md
 daily/
 
 # Dado real do candidato — só o .example.yaml é commitado
