@@ -28,6 +28,15 @@ too large — a customized CV isn't worth the effort.
    breakers below
 5. Alignment with `preferences.target_roles` / `target_industries` (10% weight)
 
+**Entry-level candidates** (empty `professional_experience` and
+`personal_projects` — see `rules/cv-rules.md` → Entry-Level Candidates):
+dimension 2 has nothing to measure and would unfairly cap every score at
+75%. Redistribute its 25% into dimension 1 (stack, now 65%) when the job
+itself is an internship/trainee/entry-level posting — those postings don't
+expect prior domain experience either. For a mid/senior posting, keep the
+weights as-is: a real domain-experience gap against a job that expects it
+is a real gap, not something to paper over.
+
 ## Gap Table (mandatory format)
 
 | Requirement | Status | Note |

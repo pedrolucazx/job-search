@@ -23,6 +23,25 @@ frontend, mobile, IoT, data, etc. Instead:
 5. A `personal_projects` item without a filled-in `link`: cite it without a
    hyperlink, never invent a repository URL.
 
+## Entry-Level Candidates (No Experience Yet)
+
+If `professional_experience` and `personal_projects` are both empty, that's
+not an incomplete profile — it's a legitimate student/intern/trainee
+candidate. Build the CV around what actually exists instead:
+
+- Lead with **Education** — expand `education[].description` if it lists
+  relevant coursework, a capstone/class project, or a bootcamp track. Still
+  never invent detail beyond what's in the profile.
+- **Skills** section carries more weight than usual — list everything in
+  `skills.<category>` even at `basic` level; for this candidate that's the
+  main evidence of capability, not a supplement to experience bullets.
+- Summary section should be honest about seniority ("Computer Science
+  student seeking an internship in backend development", not "Software
+  Engineer with X years").
+- Never fabricate a "Projects" or "Experience" section to fill space — an
+  intern/trainee CV that's mostly Education + Skills + Languages is normal
+  and expected, not a defect to paper over.
+
 ## Selection by Job Seniority
 
 Tone and verbs change based on the seniority declared in the job posting vs.

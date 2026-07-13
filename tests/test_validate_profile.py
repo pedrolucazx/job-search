@@ -62,11 +62,6 @@ class TestValidate(unittest.TestCase):
         errors = validate_profile.validate(profile)
         self.assertTrue(any("soft_skills is empty" in e for e in errors))
 
-    def test_no_experience_and_no_projects_is_an_error(self):
-        profile = make_valid_profile(professional_experience=[], personal_projects=[])
-        errors = validate_profile.validate(profile)
-        self.assertTrue(any("professional_experience" in e for e in errors))
-
     def test_invalid_tracker_backend(self):
         profile = make_valid_profile(tracker={"backend": "airtable"})
         errors = validate_profile.validate(profile)
@@ -115,6 +110,34 @@ class TestPlaceholderDataIsBlocked(unittest.TestCase):
         })
         errors = validate_profile.validate(profile)
         self.assertTrue(any("personal.github" in e for e in errors))
+
+
+class TestEntryLevelCandidate(unittest.TestCase):
+    """A student/intern applicant with zero professional_experience and zero
+    personal_projects is a real, legitimate profile (not an incomplete one)
+    — the CV just leans on education + skills + soft_skills instead. This
+    must never be treated as an error."""
+
+    def test_no_experience_and_no_projects_is_valid(self):
+        profile = make_valid_profile(
+            personal={
+                "name": "New Grad", "email": "newgrad@realmail.dev",
+                "phone": "x", "location": "x",
+            },
+            professional_experience=[],
+            personal_projects=[],
+            education=[{
+                "institution": "State University", "course": "Computer Science",
+                "degree": "Bachelor's", "status": "in progress",
+                "start": "2023", "end": "in progress",
+                "description": "Coursework: data structures, databases, web dev capstone project",
+            }],
+            skills={
+                "backend": [{"name": "Python", "level": "basic", "years": 1}],
+                "frontend": [{"name": "JavaScript", "level": "basic", "years": 1}],
+            },
+        )
+        self.assertEqual(validate_profile.validate(profile), [])
 
 
 class TestGetField(unittest.TestCase):

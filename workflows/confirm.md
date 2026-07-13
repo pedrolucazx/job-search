@@ -2,7 +2,7 @@
 
 **The only step that writes to the tracker.** Neither `apply-batch.md` nor
 `compile.md` touch it — only after the dev confirms it was actually sent
-does a record get created (an API call or a spent CSV row).
+does a record get created (an API call, a spent CSV row, or a local file).
 
 The real backend is read from `profile/candidate.yaml → tracker.backend`:
 
@@ -16,7 +16,23 @@ A list of indices from the `workflows/daily.md` table presented in this
 session (e.g. `2,5,7`), or company names directly if the table is no longer
 in the session's context.
 
-## Flow per job
+## Why there's always a local record, regardless of backend
+
+`workflows/daily.md`'s dedup check (step 2) relies on
+`documents/applications/<company>_<role>/` existing locally — this has to
+work **even when `tracker.backend: none`**, otherwise a job with `CV? = No`
+(no `.tex`, so `compile.md` never archives anything for it) would leave
+**zero trace anywhere** and resurface in every future `/daily` run. So:
+
+- Step 1 below always creates/updates the local folder, for every job,
+  regardless of backend.
+- Step 2 below additionally registers in an external tracker (csv/notion) —
+  this is extra, not the source of dedup truth.
+
+This also means local dedup keeps working as a safety net even if a
+misconfigured Notion MCP or a moved CSV file breaks the external backend.
+
+## Step 1 — Local record (always, every backend)
 
 ### If the job had `CV? = Yes` (went through `apply-batch.md`)
 
@@ -24,17 +40,36 @@ in the session's context.
    exists — this proves `compile.md` already ran and archived it.
 2. If it doesn't exist: warn, register nothing — ask to run
    `workflows/compile.md` first.
-3. If it exists: read `metadata.json` and register with **status =
-   "Applied"** (never an intermediate state).
+3. If it exists: update `<folder>/outcome.md` — set **Status: Applied** and
+   **Resolution date: today** (it currently says "waiting for send
+   confirmation", from `compile.md`).
 
 ### If the job had `CV? = No` (application via an already-registered profile)
 
 1. Use the data already collected in this session's `/daily` (no CV, no
-   local file).
-2. Check the tracker for a duplicate before registering.
-3. If it doesn't exist: register directly with status = "Applied".
+   local file yet — `compile.md` never touched this job).
+2. Create `documents/applications/<company>_<role>/outcome.md` from
+   scratch:
 
-## Registering — by backend
+   ```markdown
+   # Outcome: <Company> — <Role>
+
+   **URL:** <url>
+   **Status:** Applied (no CV — applied via existing platform profile)
+   **Application date:** <today>
+   **Resolution date:** —
+
+   ## Interview stages reached
+   - [ ] Phone screen
+   - [ ] Technical interview
+   - [ ] System design
+   - [ ] Final round
+   - [ ] Offer received
+
+   ## Notes
+   ```
+
+## Step 2 — External tracker (additional, per backend)
 
 ### `tracker.backend: csv` (default, zero dependency)
 
@@ -71,15 +106,15 @@ environment — that's why it isn't the default). Read
 
 ### `tracker.backend: none`
 
-Register nothing — just compile and archive locally
-(`documents/applications/`). Useful for anyone who doesn't want a tracker
-at all.
+Nothing to do here — Step 1's local record already happened and is the
+only bookkeeping this backend gets. This is what makes `none` safe to use:
+no external service, but `/daily` still won't resurface the job.
 
 ## Report
 
 ```
-✓ Company X → CV compiled, registered → Applied (csv/notion)
-✓ Company Y → no CV, registered → Applied
+✓ Company X → CV compiled, registered → Applied (local + csv/notion)
+✓ Company Y → no CV, registered → Applied (local + csv/notion)
 ✗ Company Z → documents/applications/.../ doesn't exist, run workflows/compile.md first
 2 confirmed, 1 pending.
 ```

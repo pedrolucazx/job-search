@@ -85,9 +85,6 @@ def validate(data: dict) -> list[str]:
             if not s.get("pt") or not s.get("en"):
                 errors.append(f"soft_skills[{i}] needs 'pt' and 'en' (bilingual format)")
 
-    if not data.get("professional_experience") and not data.get("personal_projects"):
-        errors.append("neither professional_experience nor personal_projects is filled in — the CV would be empty")
-
     tracker = data.get("tracker", {})
     backend = tracker.get("backend")
     if backend not in VALID_TRACKER_BACKENDS:

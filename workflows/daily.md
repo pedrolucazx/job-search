@@ -46,19 +46,25 @@ this varies by market/country, adjust per profile), mark the job as
 
 ## 2. Check for duplicates
 
-Depends on the active profile's `tracker.backend`:
+Always check locally first, **regardless of `tracker.backend`**:
+`documents/applications/<company>_<role>/` (any job ever confirmed via
+`workflows/confirm.md`, with or without a CV — see that file for why this
+exists even for `tracker.backend: none`) and `daily/*/*.json` from the last
+few days (catches an application in progress this week that hasn't been
+confirmed yet). This local check alone is enough to never resurface a
+confirmed job, even with no external tracker configured.
+
+Additionally, if an external tracker is configured, check it too (catches
+applications confirmed on another machine, or history from before this
+local checkout existed):
 
 - **notion**: search by company via the Notion MCP
   (`tracker.notion.database_id`). Remove jobs whose company is already
   registered, any status.
 - **csv**: read `tracker.csv.path` (e.g. `documents/applications.csv`) and
   remove jobs whose company already appears there.
-- **none**: only check locally (`documents/applications/*/` and
-  `daily/*/*.json` from the last few days) — no external tracker to query.
-
-For any backend, also check locally (`documents/applications/*/` and
-`daily/*/*.json`) — this covers an in-progress application that hasn't been
-confirmed in the tracker yet.
+- **none**: nothing extra to check — the local check above is the whole
+  story for this backend.
 
 ## 3. Calculate fit score
 
