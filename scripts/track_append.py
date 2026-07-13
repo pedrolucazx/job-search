@@ -44,7 +44,7 @@ def main():
     parser.add_argument("--versao-cv", dest="versao_cv", default="")
     parser.add_argument("--feedback", default="")
     parser.add_argument("--check-duplicate", action="store_true",
-                         help="only check whether the company already exists (no write), exit code 1 if it does")
+                         help="only check whether company+cargo already exists (no write), exit code 1 if it does")
     args = parser.parse_args()
 
     path = Path(args.path)
@@ -53,9 +53,15 @@ def main():
     if args.check_duplicate:
         if not path.exists():
             sys.exit(0)
+        # Match on company AND role, never company alone: two different
+        # roles at the same employer are two different applications, not a
+        # duplicate (see workflows/daily.md's dedup step for why matching by
+        # company alone would silently hide a genuinely different job).
         with open(path, encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
-                if row.get("empresa", "").strip().lower() == args.empresa.strip().lower():
+                same_empresa = row.get("empresa", "").strip().lower() == args.empresa.strip().lower()
+                same_cargo = row.get("cargo", "").strip().lower() == args.cargo.strip().lower()
+                if same_empresa and same_cargo:
                     print(f"already exists: {row}")
                     sys.exit(1)
         sys.exit(0)

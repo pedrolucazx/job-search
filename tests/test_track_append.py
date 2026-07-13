@@ -66,16 +66,31 @@ class TestTrackAppend(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
 
-    def test_check_duplicate_exits_one_when_present(self):
+    def test_check_duplicate_exits_one_when_same_company_and_role_present(self):
         run(
             "--path", self.csv_path,
             "--empresa", "Already Here", "--cargo", "Dev", "--data", "2026-01-01",
         )
         result = run(
             "--check-duplicate", "--path", self.csv_path,
-            "--empresa", "already here", "--cargo", "x", "--data", "2026-01-01",
+            "--empresa", "already here", "--cargo", "dev", "--data", "2026-01-01",
         )
         self.assertEqual(result.returncode, 1)
+
+    def test_check_duplicate_exits_zero_when_same_company_different_role(self):
+        # Two different roles at the same employer are two different
+        # applications, not a duplicate — matching by company alone would
+        # silently hide a genuinely different job (see workflows/daily.md's
+        # dedup step for the full rationale).
+        run(
+            "--path", self.csv_path,
+            "--empresa", "Verity", "--cargo", "Node.js Backend Developer Sênior", "--data", "2026-01-01",
+        )
+        result = run(
+            "--check-duplicate", "--path", self.csv_path,
+            "--empresa", "Verity", "--cargo", "Fullstack Developer Sênior", "--data", "2026-01-01",
+        )
+        self.assertEqual(result.returncode, 0)
 
     def test_second_write_appends_without_duplicate_header(self):
         run("--path", self.csv_path, "--empresa", "First", "--cargo", "A", "--data", "2026-01-01")

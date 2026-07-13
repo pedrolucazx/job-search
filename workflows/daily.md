@@ -69,10 +69,16 @@ applications confirmed on another machine, or history from before this
 local checkout existed):
 
 - **notion**: search by company via the Notion MCP
-  (`tracker.notion.database_id`). Remove jobs whose company is already
-  registered, any status.
+  (`tracker.notion.database_id`). Remove jobs where **both** company and
+  role match an existing entry (any status) — matching by company alone
+  would silently and permanently hide a genuinely different role at a
+  company you've touched before (e.g. a second, better-fitting posting from
+  an employer that already rejected you for a different role).
 - **csv**: read `tracker.csv.path` (e.g. `documents/applications.csv`) and
-  remove jobs whose company already appears there.
+  remove jobs where both company and role already appear there
+  (`scripts/track_append.py --check-duplicate` takes `--cargo` for exactly
+  this — passing an empty `--cargo` degrades back to the old,
+  too-broad company-only match).
 - **none**: nothing extra to check — the local check above is the whole
   story for this backend.
 

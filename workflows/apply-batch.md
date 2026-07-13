@@ -37,7 +37,11 @@ Use `rules/job-evaluation.md`, with the full description in hand:
 Read `rules/cv-rules.md` + `profile/candidate.yaml` +
 `templates/cv_template.tex`.
 
-Produce `documents/cv/main_<sanitized_company>.tex` with:
+Produce `documents/cv/main_<sanitized_company>_<sanitized_role>.tex` (role
+slug included even here — two different roles at the same company in the
+same batch would otherwise silently overwrite each other's `.tex` before
+`compile.md` ever archives them; this mirrors the `<company>_<role>`
+convention `documents/applications/` already uses downstream) with:
 - [ ] Summary personalized for the job
 - [ ] Skills ordered by overlap with the job's stack
 - [ ] 4-6 experience bullets, most relevant first
@@ -49,8 +53,9 @@ Produce `documents/cv/main_<sanitized_company>.tex` with:
 
 ### 4. Save metadata
 
-Create `daily/<date>/<sanitized_company>.json` — canonical schema, field
-names can't change (`workflows/compile.md` depends on them):
+Create `daily/<date>/<sanitized_company>_<sanitized_role>.json` (same
+collision reasoning as the `.tex` above) — canonical schema, field names
+can't change (`workflows/compile.md` depends on them):
 
 ```json
 {
@@ -58,7 +63,7 @@ names can't change (`workflows/compile.md` depends on them):
   "cargo": "Job title",
   "url": "https://...",
   "data": "YYYY-MM-DD",
-  "cv_tex": "documents/cv/main_company.tex",
+  "cv_tex": "documents/cv/main_company_job-title.tex",
   "score": 82,
   "gaps": [
     {"skill": "AWS", "status": "absent", "nota": "Identified gap"},

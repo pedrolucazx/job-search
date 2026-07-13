@@ -14,7 +14,12 @@ python3 scripts/validate_profile.py --get tracker.backend
 
 A list of indices from the `workflows/daily.md` table presented in this
 session (e.g. `2,5,7`), or company names directly if the table is no longer
-in the session's context.
+in the session's context. If a bare company name matches more than one
+pending job — more than one `daily/<date>/*.json` from today, or more than
+one `documents/applications/<company>_*/` folder still awaiting
+confirmation (the candidate applied to two different roles at the same
+employer) — list the matches (company + role) and ask which one before
+registering anything. Never guess which one the dev means.
 
 ## Why there's always a local record, regardless of backend
 
@@ -75,8 +80,10 @@ misconfigured Notion MCP or a moved CSV file breaks the external backend.
 
 ```bash
 CSV_PATH="$(python3 scripts/validate_profile.py --get tracker.csv.path)"
-python3 scripts/track_append.py --check-duplicate --path "$CSV_PATH" --empresa "<company>" --cargo "" --data ""
-# if it exited with code 0 (doesn't exist), register for real:
+python3 scripts/track_append.py --check-duplicate --path "$CSV_PATH" --empresa "<company>" --cargo "<role>" --data ""
+# --cargo must be the real role, not empty — check-duplicate matches on
+# company AND role, so an empty --cargo would never match anything and
+# silently disable the check. If it exited with code 0 (doesn't exist), register for real:
 python3 scripts/track_append.py \
   --path "$CSV_PATH" \
   --empresa "<company>" --cargo "<role>" --url "<url>" \
@@ -101,8 +108,9 @@ environment — that's why it isn't the default). Read
   left over goes in the Feedback text, never try to write outside the
   vocabulary.
 - **Identified gaps**: same rule, filtering by `tracker.notion.gap_tags`.
-- Before creating, search (`notion-search` or equivalent) by company to
-  avoid duplicates.
+- Before creating, search (`notion-search` or equivalent) by company **and**
+  role to avoid duplicates — matching by company alone would wrongly flag a
+  different role at the same employer as already registered.
 
 ### `tracker.backend: none`
 
