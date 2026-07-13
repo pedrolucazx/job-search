@@ -198,3 +198,10 @@ always passes validation.
 The job search CLIs (`.agents/skills/linkedin-search/`, `.agents/skills/freehire-search/`)
 were adapted from parts of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search)
 (not a fork) — including the choice of running them on Bun.
+
+The Notion tracker (`tracker.backend: notion`) was inspired by
+[Leticia Coelho](https://github.com/engenheiracoelho)'s
+["Rastreador de vagas"](https://mud-sheet-86a.notion.site/Rastreador-de-vagas-34e9c83aae6141798c6d470a28f71e1c)
+template — this repo's version adds more properties (stack, gaps, level,
+CV version) but the core idea (company/role/status/link columns) traces
+back to hers.
