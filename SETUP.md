@@ -5,8 +5,11 @@
 # LaTeX (texlive-latex-extra é obrigatório — o template usa titlesec, que não vem no recommended)
 sudo apt install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
-# pdftotext (ATS check)
+# pdftotext + pdfinfo (ATS check e contagem de página)
 sudo apt install poppler-utils
+
+# jq (compile-all.sh lê os campos do metadata JSON com isso)
+sudo apt install jq
 
 # Bun (LinkedIn CLI)
 curl -fsSL https://bun.sh/install | bash
@@ -21,8 +24,16 @@ cd ../../../..
 
 ## Verificação
 ```bash
+python3 scripts/check_setup.py
+```
+Roda todas as checagens de uma vez (bun, pdflatex, pdftotext, pdfinfo, jq,
+PyYAML) e diz exatamente o que falta instalar. Verificação manual, se
+preferir:
+```bash
 pdflatex --version
 pdftotext -v
+pdfinfo -v
+jq --version
 bun --version
 python3 -c "import yaml; print('pyyaml ok')"  # pip install pyyaml se faltar
 bun run .agents/skills/linkedin-search/cli/src/cli.ts search -l "Brazil" --jobage 7 --limit 3 --format table

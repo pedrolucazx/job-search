@@ -24,6 +24,29 @@ or even a plain chat without tool-use for the manual path).
 > the maintainer's own daily-use language, and it doesn't affect how the
 > pipeline works for you.
 
+## 5-minute checklist (new here? start here)
+
+If you've never used this kind of agent-driven repo before, follow these in
+order — nothing else to read first:
+
+- [ ] Clone this repo (or use "Use this template" on GitHub)
+- [ ] Run `python3 scripts/check_setup.py` — it tells you exactly what's
+      missing (Bun, LaTeX, PyYAML...) and how to install each one. Rerun it
+      until everything shows ✅.
+- [ ] `cp profile/candidate.example.yaml profile/candidate.yaml`
+- [ ] Open `profile/candidate.yaml` and replace every value with your own
+      real data (name, email, skills, experience — see
+      `profile/candidate.schema.yaml` if a field is unclear). Never leave
+      the example's placeholder data in there — see the warning below,
+      the pipeline will refuse to run if you do.
+- [ ] Run `python3 scripts/validate_profile.py` — fix anything it flags
+- [ ] Install the search CLIs (step 2 in "Getting started" below)
+- [ ] Open your coding agent (Claude Code, Codex, OpenCode...) in this
+      folder and type `/daily`
+
+That's it — the agent takes it from there and tells you what to do next at
+every step.
+
 ## How it works
 
 ```
@@ -45,11 +68,19 @@ for the full architecture.
 - A coding agent with file + shell access (Claude Code, Codex, OpenCode...)
 - Python 3 + PyYAML — check with `python3 -c "import yaml"`
 - [Bun](https://bun.sh) — for the job search CLIs
-- LaTeX (`pdflatex`) + `pdftotext` (poppler-utils) — to compile and ATS-check
+- LaTeX (`pdflatex`) + `pdftotext`/`pdfinfo` (poppler-utils) — to compile and ATS-check
+- `jq` — reads fields out of the metadata JSON during compilation
 
-Detailed install steps: [SETUP.md](SETUP.md).
+Run `python3 scripts/check_setup.py` to check all of these at once — it
+tells you exactly what's missing and how to install it. Detailed manual
+install steps: [SETUP.md](SETUP.md).
 
 ## Getting started
+
+```bash
+# 0. Check your environment first — tells you exactly what's missing
+python3 scripts/check_setup.py
+```
 
 ```bash
 # 1. Your profile (never invent data — leave blank what you don't know)
@@ -108,18 +139,33 @@ Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
 python3 -m unittest discover -s tests
 ```
 
-Covers `scripts/validate_profile.py` and `scripts/track_append.py` (stdlib
-`unittest`, zero extra dependency), plus a guard that
-`profile/candidate.example.yaml` always passes validation.
+Covers `scripts/validate_profile.py`, `scripts/track_append.py`, and
+`scripts/check_setup.py` (stdlib `unittest`, zero extra dependency), plus a
+guard that `profile/candidate.example.yaml` always passes validation.
 
 ## Troubleshooting
 
+### Setup / environment
+
 | Symptom | Where to look |
 |---|---|
+| Not sure what's wrong with your setup | Run `python3 scripts/check_setup.py` first — it checks everything at once and tells you exactly what's missing |
+| `bash: bun: command not found` | Bun isn't installed — `curl -fsSL https://bun.sh/install \| bash`, then open a new terminal (or `source` your shell config) so it's on your PATH |
+| `pdflatex: command not found` | LaTeX isn't installed — see [SETUP.md](SETUP.md); on Debian/Ubuntu you need `texlive-latex-extra` specifically, not just `texlive-latex-base` (the template uses `titlesec`, which isn't in the base set) |
+| `ModuleNotFoundError: No module named 'yaml'` | PyYAML isn't installed — `pip install pyyaml` (or `pip3 install pyyaml` depending on your system) |
+| `jq: command not found` | `sudo apt install jq` (or `brew install jq` on macOS) — used to read fields out of the metadata JSON during compilation |
+| Your coding agent doesn't recognize `/daily` as a command | Not every agent has slash-command support. Just say it in plain language instead: "read AGENTS.md, then workflows/daily.md, and run the steps using profile/candidate.yaml" |
+| Not sure what to put in `tracker.backend` | Use `csv` unless you specifically already use Notion and know your database ID — `csv` needs nothing installed and works out of the box |
+
+### Day-to-day usage
+
+| Symptom | Where to look |
+|---|---|
+| `python3 scripts/validate_profile.py` fails right after copying the example | That's expected the first time — it's telling you which placeholder fields (name, email, handles) you still need to replace with your real data. Fix each line it lists, then run it again |
 | `/daily` finds no jobs | LinkedIn may have blocked scraping — try freehire only, or paste the URL directly into `/apply-batch` |
 | CV came out longer than 1 page | `/compile-today` already blocks this on its own (won't register, won't archive, shows up in the report) — trim content following `rules/cv-rules.md` and rerun `/compile-today` |
 | `/compile-today` failed to compile | The pdflatex log shows up in the report — usually an unescaped special character |
-| A job showed up before | `/daily` filters against the tracker **and** local files (`documents/applications/`, `daily/*/*.json`) to catch an in-progress application that hasn't been confirmed yet |
+| A job showed up before | `/daily` filters against the tracker **and** local files (`documents/applications/`, `daily/*/*.json`) to catch an in-progress application that hasn't been confirmed yet — this works even with `tracker.backend: none`, see `workflows/confirm.md` |
 | Forgot to run `/confirm` | No problem — the CV is already compiled and archived locally, the tracker just stays out of date until you run `/confirm <number>`; doesn't have to be the same day |
 
 ## Other documents
