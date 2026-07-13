@@ -57,6 +57,18 @@ If `preferences.deal_breakers` includes something about work arrangement
 description before applying the exclusion** — search tags (`--remote
 remote` etc.) aren't reliable, platforms have mislabeled jobs before.
 
+If `preferences.deal_breakers` includes an education-completion requirement
+(a specific degree the candidate hasn't finished yet), watch for it even
+when the job description only lists it softly (e.g. "ensino superior" or
+"upper education degree" under "additional requirements", not flagged as
+mandatory). Some application platforms (Gupy in particular) ask this as a
+**hidden eliminatory screening question** in the application form itself —
+invisible when just reading the posting's text — and auto-reject on the
+spot before a human ever sees the CV. If the JD mentions any degree
+requirement at all and the candidate's `education` doesn't have a matching
+`status: "completed"` entry, treat it as a likely deal breaker and flag it
+clearly, even without 100% certainty from the text alone.
+
 ## Seniority Mismatch
 
 If `preferences.seniority_by_stack` exists and the job asks for a different
