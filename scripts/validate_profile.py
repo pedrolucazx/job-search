@@ -26,6 +26,14 @@ REQUIRED_TOP_LEVEL = [
 REQUIRED_PERSONAL = ["name", "email", "phone", "location"]
 VALID_TRACKER_BACKENDS = ["csv", "notion", "none"]
 
+# Values shipped in profile/candidate.example.yaml. If any of these are still
+# present, the dev copied the template but never actually edited it — this
+# must hard-block, not just warn, because plenty of people never read setup
+# instructions and would otherwise ship a CV with someone else's contact info.
+PLACEHOLDER_NAME = "Alex Devsson"
+PLACEHOLDER_EMAIL_DOMAIN = "@example.com"
+PLACEHOLDER_HANDLES = ["alexdevsson"]
+
 
 def load_profile(path: Path) -> dict:
     if not path.exists():
@@ -50,6 +58,25 @@ def validate(data: dict) -> list[str]:
     for key in REQUIRED_PERSONAL:
         if not personal.get(key):
             errors.append(f"personal.{key} is missing or empty")
+
+    email = str(personal.get("email", ""))
+    if email.lower().endswith(PLACEHOLDER_EMAIL_DOMAIN):
+        errors.append(
+            f"personal.email ({email}) is still the example profile's placeholder — "
+            "this file is YOUR data, not the template's. Put your real email in profile/candidate.yaml."
+        )
+    if personal.get("name") == PLACEHOLDER_NAME:
+        errors.append(
+            f"personal.name is still '{PLACEHOLDER_NAME}', the example profile's placeholder name — "
+            "put your real name in profile/candidate.yaml."
+        )
+    for field in ("linkedin", "github", "portfolio"):
+        value = str(personal.get(field, "")).lower()
+        if any(handle in value for handle in PLACEHOLDER_HANDLES):
+            errors.append(
+                f"personal.{field} ({personal.get(field)}) still points to the example profile's "
+                "placeholder handle — replace it with your own."
+            )
 
     if not data.get("soft_skills"):
         errors.append("soft_skills is empty — needs at least 1 (recommended: exactly 6)")

@@ -54,9 +54,18 @@ Detailed install steps: [SETUP.md](SETUP.md).
 ```bash
 # 1. Your profile (never invent data — leave blank what you don't know)
 cp profile/candidate.example.yaml profile/candidate.yaml
-# fill in profile/candidate.yaml with your real data
+# fill in profile/candidate.yaml with your real data — name, email, everything
 python3 scripts/validate_profile.py
+```
 
+⚠️ **`validate_profile.py` will refuse to pass if you forgot to replace the
+example's placeholder name/email/handles** — this is not a style suggestion,
+it's a hard block. If you just copy the template and run the pipeline
+without editing it, you'll get a clear error telling you exactly what's
+still unedited, instead of silently generating a CV with someone else's
+contact info.
+
+```bash
 # 2. Job search CLIs
 cd .agents/skills/linkedin-search/cli && bun install && cd ../../../..
 cd .agents/skills/freehire-search/cli && bun install && cd ../../../..

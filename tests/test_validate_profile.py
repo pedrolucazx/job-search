@@ -19,7 +19,7 @@ def make_valid_profile(**overrides):
         "profile_version": "1.1",
         "personal": {
             "name": "Test Person",
-            "email": "test@example.com",
+            "email": "test@realmail.dev",
             "phone": "+1 555 0000",
             "location": "Nowhere",
         },
@@ -87,10 +87,40 @@ class TestValidate(unittest.TestCase):
         self.assertEqual(validate_profile.validate(profile), [])
 
 
+class TestPlaceholderDataIsBlocked(unittest.TestCase):
+    """The #1 real-world failure mode this guards against: someone copies
+    candidate.example.yaml to candidate.yaml and never actually edits it,
+    shipping a CV with someone else's name/email. This must hard-block."""
+
+    def test_example_email_domain_is_rejected(self):
+        profile = make_valid_profile(personal={
+            "name": "Someone Real", "email": "someone@example.com",
+            "phone": "x", "location": "x",
+        })
+        errors = validate_profile.validate(profile)
+        self.assertTrue(any("personal.email" in e and "placeholder" in e for e in errors))
+
+    def test_example_name_is_rejected(self):
+        profile = make_valid_profile(personal={
+            "name": "Alex Devsson", "email": "real@realmail.dev",
+            "phone": "x", "location": "x",
+        })
+        errors = validate_profile.validate(profile)
+        self.assertTrue(any("placeholder name" in e for e in errors))
+
+    def test_example_github_handle_is_rejected(self):
+        profile = make_valid_profile(personal={
+            "name": "Someone Real", "email": "real@realmail.dev",
+            "phone": "x", "location": "x", "github": "github.com/alexdevsson",
+        })
+        errors = validate_profile.validate(profile)
+        self.assertTrue(any("personal.github" in e for e in errors))
+
+
 class TestGetField(unittest.TestCase):
     def test_get_nested_field(self):
         profile = make_valid_profile()
-        self.assertEqual(validate_profile.get_field(profile, "personal.email"), "test@example.com")
+        self.assertEqual(validate_profile.get_field(profile, "personal.email"), "test@realmail.dev")
 
     def test_get_missing_field_returns_none(self):
         profile = make_valid_profile()
@@ -104,10 +134,23 @@ class TestGetField(unittest.TestCase):
 class TestRealExampleProfile(unittest.TestCase):
     """Guards against the shipped example ever silently breaking the schema."""
 
-    def test_example_profile_is_valid(self):
+    def test_example_profile_is_structurally_complete(self):
+        # The example ships with placeholder identity on purpose (that's the
+        # whole point — see TestPlaceholderDataIsBlocked). Everything else
+        # about it must still be schema-complete.
         example_path = SCRIPTS_DIR.parent / "profile" / "candidate.example.yaml"
         data = validate_profile.load_profile(example_path)
-        self.assertEqual(validate_profile.validate(data), [])
+        errors = validate_profile.validate(data)
+        non_placeholder_errors = [e for e in errors if "placeholder" not in e]
+        self.assertEqual(non_placeholder_errors, [])
+
+    def test_example_profile_as_is_gets_blocked(self):
+        # If someone copies the example straight to candidate.yaml without
+        # editing it, validation must refuse to pass.
+        example_path = SCRIPTS_DIR.parent / "profile" / "candidate.example.yaml"
+        data = validate_profile.load_profile(example_path)
+        errors = validate_profile.validate(data)
+        self.assertTrue(any("placeholder" in e for e in errors))
 
 
 if __name__ == "__main__":
