@@ -37,6 +37,9 @@ any tool's proprietary format.
    - `workflows/confirm.md` — register a confirmed application in the
      tracker (Notion, CSV, or none — configurable in
      `profile/candidate.yaml → tracker`)
+   - `workflows/interview-prep.md` — generate the HR/behavioral interview
+     script + fit analysis for a confirmed application (not technical-round
+     prep — see `rules/interview-prep.md` for that)
 5. **`templates/cv_template.tex`** — base LaTeX template.
 6. **`scripts/`** — automation (`validate_profile.py`, `compile-all.sh`,
    `track_append.py`).

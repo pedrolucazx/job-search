@@ -12,6 +12,7 @@ at the repo root for where to start).
 | `job-evaluation.md` | Fit score framework, gap table, deal breakers |
 | `ats-verification.md` | Compilation pipeline and ATS verification |
 | `interview-prep.md` | Interview prep based on registered applications |
+| `interview-roteiro.md` | HR/behavioral presentation script + fit analysis template (used by `workflows/interview-prep.md`) |
 
 ## Absolute Rules (apply to any candidate)
 

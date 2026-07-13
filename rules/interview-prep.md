@@ -1,5 +1,10 @@
 # interview-prep.md — Interview Preparation (generic)
 
+For the HR/behavioral presentation script (self-intro + critical fit
+analysis) generated per job via `/interview-prep`, see
+`rules/interview-roteiro.md` instead — this file covers deeper technical
+prep collected over time, not that single-shot generator.
+
 ## STAR Examples
 
 Collect and organize these as applications get registered in the tracker

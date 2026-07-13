@@ -24,12 +24,14 @@ or even a plain chat without tool-use for the manual path).
 > fill out the form, and upload the CV yourself. No auto-apply, no bot
 > submitting on your account, ever.
 
-> This repo is a working instance for one person's job search. The generic
-> engine (`AGENTS.md`, `rules/`, `workflows/`, `profile/`) is in English so
-> any dev can reuse it. The day-to-day command files (`CLAUDE.md`,
-> `.claude/commands/`, `.opencode/commands/`) stay in Portuguese — that's
-> the maintainer's own daily-use language, and it doesn't affect how the
-> pipeline works for you.
+> This repo is a working instance for one person's job search. Everything
+> that drives the pipeline — the generic engine (`AGENTS.md`, `rules/`,
+> `workflows/`, `profile/`) and the day-to-day command files (`CLAUDE.md`,
+> `.claude/commands/`, `.opencode/commands/`) — is in English, so any dev can
+> reuse it as-is. The one exception is generated output meant to be read or
+> spoken by a human in a specific interview (e.g.
+> `documents/applications/*/roteiro.md`), which stays in whatever language
+> that candidate actually interviews in.
 
 ## 5-minute checklist (new here? start here)
 
@@ -133,6 +135,7 @@ Then, inside your coding agent:
 | `/apply-batch <indices\|url>` | Generate a `.tex` CV for chosen jobs — blocks on deal-breaker or score < 60% before spending effort |
 | `/compile-today` | Compile `.tex` → PDF, run ATS check, archive — **never touches the tracker** |
 | `/confirm <indices>` | Only command that registers "Applied" in the tracker |
+| `/interview-prep <company>` | Generate an HR/behavioral interview script + honest fit analysis for an already-confirmed job — not technical-round prep, that varies too much per company to generalize |
 
 ## Architecture
 
@@ -153,9 +156,10 @@ Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
 python3 -m unittest discover -s tests
 ```
 
-Covers `scripts/validate_profile.py`, `scripts/track_append.py`, and
-`scripts/check_setup.py` (stdlib `unittest`, zero extra dependency), plus a
-guard that `profile/candidate.example.yaml` always passes validation.
+Covers `scripts/validate_profile.py`, `scripts/track_append.py`,
+`scripts/check_setup.py`, and `scripts/check_roteiro.py` (stdlib `unittest`,
+zero extra dependency), plus a guard that `profile/candidate.example.yaml`
+always passes validation.
 
 ## Troubleshooting
 
