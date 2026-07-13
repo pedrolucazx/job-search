@@ -1,88 +1,91 @@
-# cv-rules.md — Regras de Geração de CV (genérico, qualquer track)
+# cv-rules.md — CV Generation Rules (generic, any track)
 
-Ver `README.md` pras Regras Absolutas. Este arquivo cobre a lógica de seleção
-e formatação do conteúdo do CV. Nunca contém dado de candidato — tudo aqui lê
-`profile/candidate.yaml`.
+See `README.md` for the Absolute Rules. This file covers the logic for
+selecting and formatting CV content. Never contains candidate data —
+everything here reads `profile/candidate.yaml`.
 
-## Seleção de Conteúdo por Overlap de Stack
+## Content Selection by Stack Overlap
 
-Não existe tabela fixa de "qual projeto destacar pra qual stack" — isso seria
-regra de nicho, e o objetivo é funcionar igual pra backend, frontend, mobile,
-IoT, dados etc. Em vez disso:
+There's no fixed table of "which project to highlight for which stack" —
+that would be niche-specific, and the goal is to work the same for backend,
+frontend, mobile, IoT, data, etc. Instead:
 
-1. Extrair a stack requerida da vaga (obrigatórios + desejáveis).
-2. Para cada item de `professional_experience[].projects[]` e cada item de
-   `personal_projects[]`, calcular overlap entre `stack` do item e a stack da
-   vaga.
-3. Ordenar por overlap decrescente. Escolher os projetos/experiências com
-   maior overlap pra destacar primeiro no CV — os de baixo overlap ficam de
-   fora se o espaço de 1 página apertar.
-4. Item com `include_only_if` só entra se a condição textual bater com a vaga
-   (ex: um projeto Ruby só aparece se a vaga menciona Ruby).
-5. Item de `personal_projects` sem `link` preenchido: citar sem hyperlink,
-   nunca inventar uma URL de repositório.
+1. Extract the job's required stack (must-have + nice-to-have).
+2. For each item in `professional_experience[].projects[]` and each item in
+   `personal_projects[]`, compute the overlap between that item's `stack`
+   and the job's stack.
+3. Sort by overlap, descending. Pick the projects/experiences with the
+   highest overlap to highlight first in the CV — low-overlap ones get cut
+   if the 1-page limit gets tight.
+4. An item with `include_only_if` only gets included if the textual
+   condition matches the job (e.g. a Ruby project only shows up if the job
+   mentions Ruby).
+5. A `personal_projects` item without a filled-in `link`: cite it without a
+   hyperlink, never invent a repository URL.
 
-## Seleção por Nível da Vaga
+## Selection by Job Seniority
 
-Tom e verbos mudam conforme o nível declarado na vaga vs a senioridade do
-candidato (`preferences.seniority_by_stack`, se preenchido):
+Tone and verbs change based on the seniority declared in the job posting vs.
+the candidate's seniority (`preferences.seniority_by_stack`, if filled in):
 
-| Nível da vaga | Tom | Verbos preferidos |
+| Job level | Tone | Preferred verbs |
 |---|---|---|
-| Sênior/Staff/Especialista | Autonomia, ownership, decisão arquitetural | Conduzi, Defini, Garanti, Arquitetei |
-| Pleno | Autonomia técnica, condução | Conduzi, Defini, Garanti, Implementei |
-| Júnior | Fundamentos, entrega, aprendizado | Desenvolvi, Implementei, Colaborei |
+| Senior/Staff/Specialist | Autonomy, ownership, architectural decisions | Led, Defined, Ensured, Architected |
+| Mid-level | Technical autonomy, driving work | Led, Defined, Ensured, Implemented |
+| Junior | Fundamentals, delivery, learning | Developed, Implemented, Collaborated |
 
-Se `preferences.seniority_by_stack` sinalizar mismatch (vaga pede nível acima
-do que o candidato declarou pra aquela stack), reportar isso na avaliação —
-não impede geração do CV sozinho, mas o agente deve avisar no relatório.
+If `preferences.seniority_by_stack` flags a mismatch (the job asks for a
+level above what the candidate declared for that stack), report it in the
+evaluation — it doesn't block CV generation by itself, but the agent should
+flag it in the report.
 
 ## Soft Skills
 
-Sempre bilíngue, formato `"Português (English)"`. Usar exatamente as 6 (ou
-quantas houver) de `profile/candidate.yaml → soft_skills`. Se a vaga usar um
-termo equivalente a alguma delas, pode trocar o rótulo mantendo o par
-bilíngue — nunca adicionar uma sétima.
+Always bilingual, format `"Language A (Language B)"`. Use exactly the 6 (or
+however many there are) from `profile/candidate.yaml → soft_skills`. If the
+job uses an equivalent term for one of them, you can swap the label while
+keeping the bilingual pair — never add a 7th.
 
-## Bullets de Experiência
+## Experience Bullets
 
-Formato: **VERBO DE AÇÃO + CONTEXTO TÉCNICO + RESULTADO/ESCOPO**.
+Format: **ACTION VERB + TECHNICAL CONTEXT + RESULT/SCOPE**.
 
-- 4 a 6 bullets por experiência, começando pelo mais relevante pra vaga.
-- Variar o verbo — nunca repetir o mesmo verbo em bullets consecutivos.
-- Basear os bullets em `professional_experience[].responsibilities` — não
-  inventar responsabilidade que não está listada lá.
-- Se o profile distinguir ferramentas por contexto (ex: um ORM usado no
-  trabalho e outro em projetos pessoais), respeitar essa distinção — não
-  transplantar ferramenta de projeto pessoal pro bullet de experiência
-  profissional ou vice-versa.
+- 4 to 6 bullets per experience, starting with the most relevant to the job.
+- Vary the verb — never repeat the same verb in consecutive bullets.
+- Base bullets on `professional_experience[].responsibilities` — don't
+  invent a responsibility that isn't listed there.
+- If the profile distinguishes tools by context (e.g. one ORM used at work
+  and another in personal projects), respect that distinction — don't
+  transplant a personal-project tool into a professional-experience bullet
+  or vice versa.
 
-**Exemplo de bullet correto**: verbo específico + tecnologia real do profile
-+ escopo/resultado concreto. Nunca genérico tipo "Construção de APIs robustas
-e seguras" (isso não diz nada verificável).
+**Example of a correct bullet**: specific verb + real technology from the
+profile + concrete scope/result. Never generic like "Built robust and
+secure APIs" (that says nothing verifiable).
 
-## Duração de Experiência
+## Experience Duration
 
-Nunca arredondar tempo de experiência além de 1 ano (ex: se
-`duration_note` diz "4+ anos", escrever "4 anos" ou "4+ anos", nunca "5 anos").
+Never round experience time beyond 1 year (e.g. if `duration_note` says
+"4+ years", write "4 years" or "4+ years", never "5 years").
 
-## Template e Formatação
+## Template and Formatting
 
-- Article class LaTeX, A4, 1 página, fonte sans-serif (Helvetica ou
-  equivalente), cor de destaque única pra títulos de seção.
-- Ver `templates/cv_template.tex` como base — ele já tem os placeholders.
-- Título de seção em UPPERCASE, sem duas colunas/tabelas/ícones/imagens
-  (Regra Absoluta #6).
+- LaTeX article class, A4, 1 page, sans-serif font (Helvetica or
+  equivalent), a single accent color for section headings.
+- See `templates/cv_template.tex` as the base — it already has the
+  placeholders.
+- Section titles in UPPERCASE, no two columns/tables/icons/images (Absolute
+  Rule #6).
 
-## Checklist Obrigatório Antes de Entregar
+## Mandatory Checklist Before Delivering
 
-1. Nenhum dado inventado — todo bullet/projeto/skill rastreável até
+1. No invented data — every bullet/project/skill traceable to
    `profile/candidate.yaml`.
-2. Nomes de instituições/projetos/tecnologias grafados exatamente como no
-   profile (checar erro de digitação).
-3. Links de repositório como hyperlink de verdade, só os que têm `link`
-   preenchido no profile.
-4. Formação e Idiomas idênticos ao profile, sem paráfrase.
-5. Documento cabe em 1 página A4.
-6. Email e telefone aparecem como texto literal no PDF final (não como glifo
-   de ícone — verificado no `ats-verification.md`).
+2. Institution/project/technology names spelled exactly as in the profile
+   (check for typos).
+3. Repository links as real hyperlinks, only for items with `link` filled
+   in the profile.
+4. Education and Languages identical to the profile, no paraphrasing.
+5. Document fits on 1 A4 page.
+6. Email and phone appear as literal text in the final PDF (not as an icon
+   glyph — verified in `ats-verification.md`).

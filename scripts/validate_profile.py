@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""validate_profile.py — carrega e valida profile/candidate.yaml.
+"""validate_profile.py — loads and validates profile/candidate.yaml.
 
-Zero dependência externa além de PyYAML (pré-instalado na maioria das
-distros/imagens Python; senão: pip install pyyaml).
+Zero external dependency besides PyYAML (pre-installed on most Python
+distros/images; otherwise: pip install pyyaml).
 
-Uso:
-  python3 scripts/validate_profile.py                  # valida e imprime resumo
+Usage:
+  python3 scripts/validate_profile.py                  # validate and print summary
   python3 scripts/validate_profile.py --get personal.email
-  python3 scripts/validate_profile.py --path outro/candidate.yaml
+  python3 scripts/validate_profile.py --path other/candidate.yaml
 """
 import sys
 import argparse
@@ -16,7 +16,7 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:
-    print("ERRO: PyYAML não encontrado. Instale com: pip install pyyaml", file=sys.stderr)
+    print("ERROR: PyYAML not found. Install with: pip install pyyaml", file=sys.stderr)
     sys.exit(1)
 
 REQUIRED_TOP_LEVEL = [
@@ -29,12 +29,12 @@ VALID_TRACKER_BACKENDS = ["csv", "notion", "none"]
 
 def load_profile(path: Path) -> dict:
     if not path.exists():
-        print(f"ERRO: {path} não existe. Copie profile/candidate.example.yaml e preencha.", file=sys.stderr)
+        print(f"ERROR: {path} does not exist. Copy profile/candidate.example.yaml and fill it in.", file=sys.stderr)
         sys.exit(1)
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict):
-        print(f"ERRO: {path} não parseou como um mapa YAML válido.", file=sys.stderr)
+        print(f"ERROR: {path} did not parse as a valid YAML map.", file=sys.stderr)
         sys.exit(1)
     return data
 
@@ -44,38 +44,38 @@ def validate(data: dict) -> list[str]:
 
     for key in REQUIRED_TOP_LEVEL:
         if key not in data:
-            errors.append(f"campo obrigatório ausente: {key}")
+            errors.append(f"missing required field: {key}")
 
     personal = data.get("personal", {})
     for key in REQUIRED_PERSONAL:
         if not personal.get(key):
-            errors.append(f"personal.{key} ausente ou vazio")
+            errors.append(f"personal.{key} is missing or empty")
 
     if not data.get("soft_skills"):
-        errors.append("soft_skills vazio — precisa de ao menos 1 (recomendado: exatamente 6)")
+        errors.append("soft_skills is empty — needs at least 1 (recommended: exactly 6)")
     else:
         for i, s in enumerate(data["soft_skills"]):
             if not s.get("pt") or not s.get("en"):
-                errors.append(f"soft_skills[{i}] precisa de 'pt' e 'en' (formato bilíngue)")
+                errors.append(f"soft_skills[{i}] needs 'pt' and 'en' (bilingual format)")
 
     if not data.get("professional_experience") and not data.get("personal_projects"):
-        errors.append("nem professional_experience nem personal_projects preenchidos — CV ficaria vazio")
+        errors.append("neither professional_experience nor personal_projects is filled in — the CV would be empty")
 
     tracker = data.get("tracker", {})
     backend = tracker.get("backend")
     if backend not in VALID_TRACKER_BACKENDS:
-        errors.append(f"tracker.backend inválido: {backend!r} (esperado: {VALID_TRACKER_BACKENDS})")
+        errors.append(f"invalid tracker.backend: {backend!r} (expected: {VALID_TRACKER_BACKENDS})")
     elif backend == "notion":
         notion = tracker.get("notion", {})
         if not notion.get("database_id") or not notion.get("data_source_id"):
-            errors.append("tracker.backend=notion mas notion.database_id/data_source_id ausentes")
+            errors.append("tracker.backend=notion but notion.database_id/data_source_id is missing")
     elif backend == "csv":
         if not tracker.get("csv", {}).get("path"):
-            errors.append("tracker.backend=csv mas tracker.csv.path ausente")
+            errors.append("tracker.backend=csv but tracker.csv.path is missing")
 
     for i, proj in enumerate(data.get("personal_projects", [])):
         if not proj.get("link") and not proj.get("include_only_if"):
-            # link vazio é aceitável (repo não confirmado), só avisa
+            # empty link is acceptable (unconfirmed repo), just a no-op check
             pass
 
     return errors
@@ -100,8 +100,8 @@ def summarize(data: dict) -> str:
     return (
         f"Profile: {personal.get('name', '?')} <{personal.get('email', '?')}>\n"
         f"Track: {data.get('track', '?')}\n"
-        f"Experiências profissionais: {n_exp} | Projetos pessoais: {n_proj}\n"
-        f"Skills catalogadas: {n_skills}\n"
+        f"Professional experiences: {n_exp} | Personal projects: {n_proj}\n"
+        f"Skills catalogued: {n_skills}\n"
         f"Tracker backend: {tracker_backend}\n"
         f"Deal breakers: {data.get('preferences', {}).get('deal_breakers', [])}"
     )
@@ -110,7 +110,7 @@ def summarize(data: dict) -> str:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", default=str(Path(__file__).resolve().parent.parent / "profile" / "candidate.yaml"))
-    parser.add_argument("--get", help="dotted path do campo a extrair, ex: personal.email")
+    parser.add_argument("--get", help="dotted path of the field to extract, e.g. personal.email")
     args = parser.parse_args()
 
     data = load_profile(Path(args.path))
@@ -118,7 +118,7 @@ def main():
     if args.get:
         value = get_field(data, args.get)
         if value is None:
-            print(f"ERRO: campo '{args.get}' não encontrado", file=sys.stderr)
+            print(f"ERROR: field '{args.get}' not found", file=sys.stderr)
             sys.exit(1)
         if isinstance(value, (list, dict)):
             print(yaml.safe_dump(value, allow_unicode=True, sort_keys=False).strip())
@@ -128,12 +128,12 @@ def main():
 
     errors = validate(data)
     if errors:
-        print(f"❌ {len(errors)} problema(s) em {args.path}:")
+        print(f"❌ {len(errors)} problem(s) in {args.path}:")
         for e in errors:
             print(f"  - {e}")
         sys.exit(1)
 
-    print(f"✅ Profile válido: {args.path}\n")
+    print(f"✅ Valid profile: {args.path}\n")
     print(summarize(data))
 
 

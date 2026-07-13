@@ -1,31 +1,33 @@
-# interview-prep.md — Preparação de Entrevista (genérico)
+# interview-prep.md — Interview Preparation (generic)
 
 ## STAR Examples
 
-Coletar e organizar conforme as candidaturas forem registradas no tracker
-(ver `workflows/confirm.md`). Para cada aplicação com entrevista, extrair do
-histórico real (`professional_experience` / `personal_projects` do profile):
-- Situação
-- Tarefa
-- Ação (com tecnologias específicas do profile — nunca genérica)
-- Resultado (com métricas, só se existirem de verdade)
+Collect and organize these as applications get registered in the tracker
+(see `workflows/confirm.md`). For each application that reaches an
+interview, extract from the real history (`professional_experience` /
+`personal_projects` in the profile):
+- Situation
+- Task
+- Action (with specific technologies from the profile — never generic)
+- Result (with metrics, only if they're real)
 
-## Tópicos por Domínio
+## Topics by Domain
 
-Não existe lista fixa aqui — os tópicos técnicos de entrevista dependem do
-`preferences.target_industries` e `track` de cada candidato (fintech, mobile,
-IoT, dados, etc.). Ao preparar entrevista pra uma vaga específica:
+There's no fixed list here — interview technical topics depend on each
+candidate's `preferences.target_industries` and `track` (fintech, mobile,
+IoT, data, etc.). When prepping for a specific job's interview:
 
-1. Olhar `preferences.target_industries` no profile pra saber o domínio.
-2. Pesquisar (WebSearch) os tópicos técnicos mais cobrados nesse domínio pra
-   esse nível de vaga.
-3. Cruzar com as skills reais do profile — preparar exemplos concretos só
-   pro que o candidato de fato tem experiência, nunca simular domínio que
-   não está no profile.
+1. Look at `preferences.target_industries` in the profile to know the
+   domain.
+2. Research (WebSearch) the technical topics most commonly asked in that
+   domain for that job level.
+3. Cross-reference with the profile's real skills — prepare concrete
+   examples only for what the candidate actually has experience with, never
+   simulate a domain that isn't in the profile.
 
 ## System Design
 
-Se a vaga pedir etapa de system design, usar as `professional_experience` e
-`personal_projects` do profile como base de exemplos reais, adaptando o
-nível de profundidade ao nível da vaga (júnior = fundamentos; pleno/sênior =
-trade-offs e escala).
+If the job includes a system design stage, use the profile's
+`professional_experience` and `personal_projects` as the basis for real
+examples, adapting the depth to the job's level (junior = fundamentals;
+mid/senior = trade-offs and scale).

@@ -1,69 +1,71 @@
-# workflows/apply-batch.md — Aplicação em Massa
+# workflows/apply-batch.md — Batch Application
 
-Gera CVs `.tex` para N vagas selecionadas na tabela do `workflows/daily.md`.
-Genérico — lê `profile/candidate.yaml` + `rules/`, nunca dado hardcoded.
+Generates `.tex` CVs for N jobs selected from the `workflows/daily.md`
+table. Generic — reads `profile/candidate.yaml` + `rules/`, never hardcoded
+data.
 
 ## Input
 
-- Lista de índices numéricos (ex: `1,2,3,4,8,10,20`) da tabela do `/daily`
-  desta sessão, OU uma URL colada direto (fluxo manual).
+- A list of numeric indices (e.g. `1,2,3,4,8,10,20`) from this session's
+  `/daily` table, OR a URL pasted directly (manual flow).
 
-## Fluxo por vaga
+## Flow per job
 
-### 1. Fetch da postagem
+### 1. Fetch the posting
 
-Se já coletada no scrape com descrição completa, usar direto. Senão,
-WebFetch da URL (ver `rules/job-evaluation.md` → Fetch de Descrição Completa
-pro fallback de domínios problemáticos).
+If already collected during the scrape with the full description, use it
+directly. Otherwise, WebFetch the URL (see `rules/job-evaluation.md` →
+Fetching the Full Description for the fallback on problematic domains).
 
-### 2. Extrair requisitos
+### 2. Extract requirements
 
-Listar obrigatórios e desejáveis da vaga.
+List must-have and nice-to-have requirements for the job.
 
-### 2.5 Gate — deal breakers e score real
+### 2.5 Gate — deal breakers and real score
 
-Usar `rules/job-evaluation.md`, com a descrição completa em mãos:
+Use `rules/job-evaluation.md`, with the full description in hand:
 
-1. Checar `profile/candidate.yaml → preferences.deal_breakers` contra a
-   descrição completa (não a tag de busca). Se bater em algum: **não gerar
-   CV**, marcar como excluída no relatório com o motivo.
-2. Calcular o score real (gap table completa). Se < 60%: **não gerar CV**,
-   marcar como excluída com o score e o principal motivo da queda.
-3. Só prosseguir pro passo 3 se passou nos dois.
+1. Check `profile/candidate.yaml → preferences.deal_breakers` against the
+   full description (not the search tag). If it matches any: **don't
+   generate a CV**, mark as excluded in the report with the reason.
+2. Calculate the real score (full gap table). If < 60%: **don't generate a
+   CV**, mark as excluded with the score and the main reason for the drop.
+3. Only proceed to step 3 if it passed both.
 
-### 3. Gerar CV
+### 3. Generate the CV
 
-Ler `rules/cv-rules.md` + `profile/candidate.yaml` + `templates/cv_template.tex`.
+Read `rules/cv-rules.md` + `profile/candidate.yaml` +
+`templates/cv_template.tex`.
 
-Produzir `documents/cv/main_<empresa_sanitizada>.tex` com:
-- [ ] Resumo personalizado alinhado à vaga
-- [ ] Habilidades ordenadas por overlap com a stack da vaga
-- [ ] 4-6 bullets de experiência, mais relevante primeiro
-- [ ] Projetos selecionados por overlap de stack (ver `rules/cv-rules.md`)
-- [ ] Formação e Idiomas — copiados exatamente de `profile/candidate.yaml`
-- [ ] Soft skills — exatamente as do profile, formato bilíngue
-- [ ] Exatamente 1 página A4
-- [ ] Nenhum dado fora do profile
+Produce `documents/cv/main_<sanitized_company>.tex` with:
+- [ ] Summary personalized for the job
+- [ ] Skills ordered by overlap with the job's stack
+- [ ] 4-6 experience bullets, most relevant first
+- [ ] Projects selected by stack overlap (see `rules/cv-rules.md`)
+- [ ] Education and Languages — copied exactly from `profile/candidate.yaml`
+- [ ] Soft skills — exactly the profile's, bilingual format
+- [ ] Exactly 1 A4 page
+- [ ] No data outside the profile
 
-### 4. Salvar metadados
+### 4. Save metadata
 
-Criar `daily/<data>/<empresa_sanitizada>.json` — schema canônico, os nomes de
-campo não podem mudar (`workflows/compile.md` depende deles):
+Create `daily/<date>/<sanitized_company>.json` — canonical schema, field
+names can't change (`workflows/compile.md` depends on them):
 
 ```json
 {
-  "empresa": "Nome da Empresa",
-  "cargo": "Cargo da vaga",
+  "empresa": "Company Name",
+  "cargo": "Job title",
   "url": "https://...",
   "data": "YYYY-MM-DD",
-  "cv_tex": "documents/cv/main_empresa.tex",
+  "cv_tex": "documents/cv/main_company.tex",
   "score": 82,
   "gaps": [
-    {"skill": "AWS", "status": "absent", "nota": "Gap identificado"},
-    {"skill": "Kafka", "status": "partial", "nota": "Conceitos, sem prática"}
+    {"skill": "AWS", "status": "absent", "nota": "Identified gap"},
+    {"skill": "Kafka", "status": "partial", "nota": "Concepts, no hands-on practice"}
   ],
   "stack": ["Node.js", "TypeScript", "PostgreSQL"],
-  "nivel": "Pleno",
+  "nivel": "Mid-level",
   "fonte": "LinkedIn",
   "requisitos_full": 7,
   "requisitos_partial": 2,
@@ -72,11 +74,12 @@ campo não podem mudar (`workflows/compile.md` depende deles):
 }
 ```
 
-### 5. Relatório parcial
+### 5. Partial report
 
-- Passou no gate: `✓ Empresa — CV gerado — <url>`
-- Excluída no gate: `✗ Empresa — excluída, score real 33% (motivo)` — sem
-  gerar `.tex`, sem gastar esforço em CV que não deveria chegar aqui.
+- Passed the gate: `✓ Company — CV generated — <url>`
+- Excluded at the gate: `✗ Company — excluded, real score 33% (reason)` —
+  no `.tex` generated, no effort wasted on a CV that shouldn't have gotten
+  this far.
 
-Ao final: "X CVs gerados, Y excluídas. Rode `workflows/compile.md` pras
-geradas."
+At the end: "X CVs generated, Y excluded. Run `workflows/compile.md` for
+the generated ones."

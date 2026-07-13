@@ -1,47 +1,48 @@
-# Rules — Índice e Regras Absolutas
+# Rules — Index and Absolute Rules
 
-Instrução universal pra qualquer agente/LLM que for operar este repositório.
-Não contém dado de nenhum candidato — isso vive em `profile/candidate.yaml`
-(veja `AGENTS.md` na raiz pra saber por onde começar).
+Universal instructions for any agent/LLM operating this repository. Contains
+no candidate data — that lives in `profile/candidate.yaml` (see `AGENTS.md`
+at the repo root for where to start).
 
-## Índice
+## Index
 
-| Arquivo | Conteúdo |
+| File | Content |
 |---|---|
-| `cv-rules.md` | Regras de geração do CV: seleção de conteúdo, verbos, formatação, soft skills |
-| `job-evaluation.md` | Framework de fit score, gap table, deal breakers |
-| `ats-verification.md` | Pipeline de compilação e verificação ATS |
-| `interview-prep.md` | Preparação de entrevista a partir das aplicações registradas |
+| `cv-rules.md` | CV generation rules: content selection, verbs, formatting, soft skills |
+| `job-evaluation.md` | Fit score framework, gap table, deal breakers |
+| `ats-verification.md` | Compilation pipeline and ATS verification |
+| `interview-prep.md` | Interview prep based on registered applications |
 
-## Regras Absolutas (valem pra qualquer candidato)
+## Absolute Rules (apply to any candidate)
 
-1. **NUNCA inventar dado** — métrica, projeto, tecnologia ou experiência fora
-   do que está em `profile/candidate.yaml`. Se faltar informação, perguntar ou
-   deixar de fora — nunca preencher com algo plausível.
-2. Seções **Formação** e **Idiomas** são TRAVADAS — copiar exatamente como
-   estão em `profile/candidate.yaml → education / languages`, nunca reescrever
-   ou resumir.
-3. CV deve caber em **exatamente 1 página A4**.
-4. Gap analysis sempre em tabela `full` / `partial` / `absent` (ver
+1. **NEVER invent data** — a metric, project, technology, or experience
+   outside what's in `profile/candidate.yaml`. If information is missing,
+   ask or leave it out — never fill in something plausible.
+2. **Education** and **Languages** sections are LOCKED — copy exactly as
+   they appear in `profile/candidate.yaml → education / languages`, never
+   rewrite or summarize.
+3. The CV must fit in **exactly 1 A4 page**.
+4. Gap analysis always as a `full` / `partial` / `absent` table (see
    `job-evaluation.md`).
-5. Soft skills sempre bilíngues, formato `"Português (English)"` — ver
+5. Soft skills are always bilingual, format `"Language A (Language B)"` — see
    `profile/candidate.yaml → soft_skills`.
-6. **NUNCA** usar duas colunas, tabelas, gráficos, ícones ou imagens no LaTeX
-   do CV (ATS não parseia).
-7. Todo dado de candidato vem de `profile/candidate.yaml` — nunca hardcoded
-   aqui em `rules/` ou em `workflows/`.
-8. Fit score e seleção de conteúdo do CV funcionam por **overlap de skills
-   declaradas vs requisitos da vaga** — nunca por vocabulário fixo de nicho
-   (o motor não assume "fintech" nem qualquer outro domínio; isso é
-   `preferences.target_industries` do profile de cada dev).
+6. **NEVER** use two columns, tables, charts, icons, or images in the CV's
+   LaTeX (ATS can't parse them).
+7. All candidate data comes from `profile/candidate.yaml` — never hardcoded
+   here in `rules/` or in `workflows/`.
+8. Fit score and CV content selection work by **overlap between declared
+   skills and job requirements** — never by a fixed niche vocabulary (the
+   engine doesn't assume "fintech" or any other domain; that's each dev's
+   own `preferences.target_industries`).
 
-## Robustez para modelos free/fracos
+## Robustness for free/weaker models
 
-Se o agente executando isso for um modelo gratuito ou mais fraco:
-- Prefira os **gates determinísticos** desta pasta (ex: regra de 100% remoto,
-  regra de 60% de score) em vez de julgamento nuançado sempre que possível.
-- Ao gerar saída estruturada (JSON de metadados, gap table), se o resultado
-  não vier bem formado, tente novamente 1x antes de reportar erro.
-- Requisito mínimo: o agente precisa ter acesso a arquivo + shell (ler
-  `profile/`, rodar `scripts/validate_profile.py`, compilar LaTeX). Um chat
-  raw sem tool-use só serve pro caminho manual (colar o YAML no prompt).
+If the agent running this is a free or weaker model:
+- Prefer this folder's **deterministic gates** (e.g. the 100%-remote rule,
+  the 60%-score rule) over nuanced judgment whenever possible.
+- When producing structured output (metadata JSON, gap table), if the
+  result isn't well-formed, retry once before reporting an error.
+- Minimum requirement: the agent needs file + shell access (read
+  `profile/`, run `scripts/validate_profile.py`, compile LaTeX). A raw chat
+  without tool-use only works for the manual path (pasting the YAML into
+  the prompt).

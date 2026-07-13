@@ -1,47 +1,50 @@
 # Job Search Agent
 
-Sou um assistente de busca de emprego: leio dados estruturados de um
-candidato e gero CVs em LaTeX (1 página A4, ATS-safe), avalio fit de vagas e
-registro candidaturas confirmadas num tracker.
+I am a job search assistant: I read structured candidate data and generate
+LaTeX CVs (1-page A4, ATS-safe), evaluate job fit, and register confirmed
+applications in a tracker.
 
-Funciono com qualquer agente de código (Claude Code, Codex, Copilot CLI,
-Cursor, Cline, OpenCode, ou um chat sem tool-use pro caminho manual) — desde
-que tenha acesso a arquivo + shell pra automação completa. Nada aqui depende
-de formato proprietário de nenhuma ferramenta.
+I work with any coding agent (Claude Code, Codex, Copilot CLI, Cursor,
+Cline, OpenCode, or a chat without tool-use for the manual path) — as long
+as it has file + shell access for full automation. Nothing here depends on
+any tool's proprietary format.
 
-## Por onde começar
+## Where to start
 
-1. **`rules/README.md`** — regras absolutas e índice das regras (universal,
-   sem dado de candidato).
-2. **`profile/candidate.yaml`** — dados do candidato ativo. Se não existir,
-   copie `profile/candidate.example.yaml` e preencha (nunca invente dado).
-   Valide com:
+1. **`rules/README.md`** — absolute rules and rule index (universal, no
+   candidate data).
+2. **`profile/candidate.yaml`** — the active candidate's data. If it doesn't
+   exist, copy `profile/candidate.example.yaml` and fill it in (never invent
+   data). Validate with:
    ```bash
    python3 scripts/validate_profile.py
    ```
-3. **`rules/`** — regras de CV, avaliação de fit, verificação ATS, preparação
-   de entrevista. Genérico pra qualquer trilha (web, mobile, IoT, dados...).
-4. **`workflows/`** — passos operacionais:
-   - `workflows/daily.md` — buscar vagas, ranquear por fit
-   - `workflows/apply-batch.md` — gerar CVs pras vagas escolhidas
-   - `workflows/compile.md` — compilar LaTeX → PDF, ATS check, arquivar
-   - `workflows/confirm.md` — registrar candidatura confirmada no tracker
-     (Notion, CSV, ou nenhum — configurável em `profile/candidate.yaml → tracker`)
-5. **`templates/cv_template.tex`** — template LaTeX base.
-6. **`scripts/`** — automação (`validate_profile.py`, `compile-all.sh`,
+3. **`rules/`** — CV rules, fit evaluation, ATS verification, interview
+   prep. Generic for any track (web, mobile, IoT, data...).
+4. **`workflows/`** — operational steps:
+   - `workflows/daily.md` — search for jobs, rank by fit
+   - `workflows/apply-batch.md` — generate CVs for the chosen jobs
+   - `workflows/compile.md` — compile LaTeX → PDF, ATS check, archive
+   - `workflows/confirm.md` — register a confirmed application in the
+     tracker (Notion, CSV, or none — configurable in
+     `profile/candidate.yaml → tracker`)
+5. **`templates/cv_template.tex`** — base LaTeX template.
+6. **`scripts/`** — automation (`validate_profile.py`, `compile-all.sh`,
    `track_append.py`).
 
-## Convenções do repositório
+## Repository conventions
 
-- `profile/` só contém abstração do candidato (dado), nunca regra/comportamento.
-- `rules/` e `workflows/` só contêm regra universal, nunca dado de pessoa.
-- `.claude/commands/`, `.claude/skills/`, `.opencode/commands/` são
-  adaptadores finos — cada um só aponta pro conteúdo real em `workflows/` +
-  `rules/` + `profile/`, adaptando à convenção de descoberta de cada agente.
-- Requisito mínimo pra automação completa: agente com acesso a arquivo +
-  shell (Python 3, Bun, pdflatex, poppler-utils). Ver `SETUP.md`.
+- `profile/` only contains the candidate's abstraction (data), never
+  rules/behavior.
+- `rules/` and `workflows/` only contain universal rules, never a person's
+  data.
+- `.claude/commands/`, `.claude/skills/`, `.opencode/commands/` are thin
+  adapters — each one only points to the real content in `workflows/` +
+  `rules/` + `profile/`, adapted to each agent's discovery convention.
+- Minimum requirement for full automation: an agent with file + shell
+  access (Python 3, Bun, pdflatex, poppler-utils). See `SETUP.md`.
 
-## Se o seu agente não tem slash command
+## If your agent has no slash commands
 
-Não tem problema. Peça diretamente: "leia `AGENTS.md`, depois
-`workflows/daily.md`, e execute os passos usando `profile/candidate.yaml`".
+No problem. Just ask directly: "read `AGENTS.md`, then
+`workflows/daily.md`, and execute the steps using `profile/candidate.yaml`."

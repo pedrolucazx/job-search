@@ -1,13 +1,14 @@
-# candidate.example.yaml — TEMPLATE (dados fictícios)
+# candidate.example.yaml — TEMPLATE (fictional data)
 #
-# Isto é a DIREÇÃO: copie este arquivo para candidate.yaml (gitignored) e
-# preencha com seus dados reais. Exemplo usa track "mobile" de propósito —
-# o formato é o mesmo pra qualquer trilha (backend, frontend, fullstack,
-# iot, data, devops...). Veja candidate.schema.yaml pra descrição de cada campo.
+# This is the DIRECTION: copy this file to candidate.yaml (gitignored) and
+# fill it in with your real data. The example uses the "mobile" track on
+# purpose — the format is the same for any track (backend, frontend,
+# fullstack, iot, data, devops...). See candidate.schema.yaml for a
+# description of each field.
 #
-# Regra de ouro (rules/README.md): nunca inventar dado que não existe.
-# Se um campo não se aplica a você, apague-o ou deixe vazio — nunca preencha
-# com algo fictício "pra não ficar em branco".
+# Golden rule (rules/README.md): never invent data that doesn't exist.
+# If a field doesn't apply to you, delete it or leave it empty — never fill
+# it with something fictional "so it isn't blank".
 
 profile_version: "1.1"
 last_updated: "2026-01-01"
@@ -15,8 +16,8 @@ last_updated: "2026-01-01"
 personal:
   name: "Alex Devsson"
   email: "alex.devsson@example.com"
-  phone: "+55 11 90000-0000"
-  location: "São Paulo, SP — Brasil"
+  phone: "+1 555 000-0000"
+  location: "Berlin, Germany"
   linkedin: "linkedin.com/in/alexdevsson"
   github: "github.com/alexdevsson"
   portfolio: "alexdevsson.dev"
@@ -24,20 +25,20 @@ personal:
 track: "mobile"
 
 education:
-  - institution: "Universidade Exemplo (UEX)"
-    course: "Bacharelado em Sistemas de Informação"
-    degree: "Bacharelado"
-    status: "concluído"
+  - institution: "Example University (EXU)"
+    course: "BSc in Information Systems"
+    degree: "Bachelor's"
+    status: "completed"
     start: "2018"
     end: "2022"
     description: ""
 
 languages:
-  - language: "Português"
-    level: "Nativo"
-  - language: "Inglês"
-    level: "Avançado (C1)"
-    institution: "Cultura Inglesa"
+  - language: "English"
+    level: "Native"
+  - language: "German"
+    level: "Advanced (C1)"
+    institution: "Goethe-Institut"
     description: ""
 
 skills:
@@ -71,45 +72,45 @@ skills:
       years: 2
 
 professional_experience:
-  - company: "Empresa Exemplo Mobile Ltda"
-    role: "Desenvolvedor Mobile Pleno"
-    period: "Jan 2023 – Presente"
-    duration_note: "3+ anos — nunca arredondar além de 1 ano"
-    location: "São Paulo, SP (Híbrido)"
+  - company: "Example Mobile Co."
+    role: "Mid-level Mobile Developer"
+    period: "Jan 2023 – Present"
+    duration_note: "3+ years — never round beyond 1 year"
+    location: "Berlin, Germany (Hybrid)"
     projects:
       - id: "A"
-        name: "App de Delivery XPTO"
+        name: "XPTO Delivery App"
         stack: ["Kotlin", "Jetpack Compose", "Coroutines", "Retrofit"]
       - id: "B"
-        name: "SDK de Pagamentos Interno"
+        name: "Internal Payments SDK"
         stack: ["Swift", "SwiftUI", "Combine"]
     responsibilities:
-      - "Desenvolvimento de features Android nativas com Kotlin e Jetpack Compose"
-      - "Integração com APIs REST via Retrofit e Coroutines"
-      - "Publicação e versionamento na Play Store via Fastlane"
-      - "Testes automatizados com JUnit e Espresso"
+      - "Built native Android features with Kotlin and Jetpack Compose"
+      - "Integrated REST APIs via Retrofit and Coroutines"
+      - "Published and versioned releases on the Play Store via Fastlane"
+      - "Wrote automated tests with JUnit and Espresso"
     highlights: []
 
 personal_projects:
   - id: "P1"
     name: "Habit Tracker App"
-    description: "App pessoal de hábitos com widget e notificações locais"
+    description: "Personal habit-tracking app with a widget and local notifications"
     stack: ["Kotlin", "Jetpack Compose", "Room", "WorkManager"]
     link: "github.com/alexdevsson/habit-tracker"
     highlights: []
   - id: "P2"
-    name: "Estudo Flutter (em progresso)"
-    description: "Projeto de estudo pra migração cross-platform"
+    name: "Flutter Study Project (in progress)"
+    description: "Study project for cross-platform migration"
     stack: ["Flutter", "Dart"]
     link: ""
-    include_only_if: "vaga menciona Flutter"
+    include_only_if: "job mentions Flutter"
     highlights: []
 
 certifications:
-  - name: "Android Developer — curso"
-    issuer: "Plataforma Exemplo"
+  - name: "Android Developer — course"
+    issuer: "Example Platform"
     type: "course"
-    note: "curso, não é certificação profissional — não inflar como certificação"
+    note: "a course, not a professional certification — don't inflate it as one"
 
 soft_skills:
   - pt: "Solução de Problemas"
@@ -126,12 +127,12 @@ soft_skills:
     en: "Continuous Learning"
 
 preferences:
-  job_types: ["CLT", "PJ"]
-  work_modes: ["remoto", "híbrido"]
+  job_types: ["full-time", "contractor"]
+  work_modes: ["remote", "hybrid"]
   salary_range:
-    min: 8000
-    max: 14000
-    currency: "BRL"
+    min: 60000
+    max: 90000
+    currency: "EUR"
   target_roles:
     - "Mobile Developer"
     - "Android Developer"
@@ -139,18 +140,18 @@ preferences:
     - "delivery"
     - "fintech"
   deal_breakers:
-    - "100% presencial"
-    - "Sem app publicado em produção"
+    - "100% on-site"
+    - "No app published in production"
   seniority_by_stack:
-    "Kotlin/Android": "Pleno/Sênior"
-    "Swift/iOS": "Júnior/Pleno"
+    "Kotlin/Android": "Mid-level/Senior"
+    "Swift/iOS": "Junior/Mid-level"
   avoid_industries: []
 
 tracker:
   backend: "csv"
   csv:
     path: "documents/applications.csv"
-  # notion: (opcional — só preencher se backend: notion)
+  # notion: (optional — only fill in if backend: notion)
   #   database_id: ""
   #   data_source_id: ""
   #   stack_tags: []

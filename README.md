@@ -1,108 +1,116 @@
-# 🎯 Job Search — Recolocação Multi-Agente
+# 🎯 Job Search — Multi-Agent Job Application System
 
 <p align="center">
-  <img src="https://img.shields.io/badge/agent--agnostic-Claude%20%7C%20Codex%20%7C%20OpenCode-1F497D?style=flat-square" alt="Agent-agnostic">
-  <img src="https://img.shields.io/badge/CV-LaTeX%201%20p%C3%A1gina%20A4-1F497D?style=flat-square" alt="CV LaTeX 1 página">
-  <img src="https://img.shields.io/badge/tracker-Notion%20%7C%20CSV%20%7C%20none-1F497D?style=flat-square" alt="Tracker plugável">
-  <img src="https://img.shields.io/badge/license-MIT-1F497D?style=flat-square" alt="MIT license">
+  <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python">
+  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white" alt="Bash">
+  <img src="https://img.shields.io/badge/latex-%23008080.svg?style=for-the-badge&logo=latex&logoColor=white" alt="LaTeX">
+  <img src="https://img.shields.io/github/license/pedrolucazx/job-search?style=for-the-badge" alt="MIT license">
 </p>
 
-<p align="center"><em>Framework de busca de emprego que roda na sua máquina, com qualquer agente de código.</em></p>
+<p align="center"><em>A job search framework that runs on your own machine, with any coding agent.</em></p>
 
-Busca vagas, avalia fit, gera CV em LaTeX (1 página A4, ATS-safe) e acompanha
-candidaturas — tudo a partir do **seu** profile em YAML. Nenhum dado de
-candidato vive no motor: troque o profile e o mesmo pipeline serve pra
-qualquer trilha (backend, frontend, mobile, IoT, dados...) e qualquer agente
-de código com acesso a arquivo + shell (Claude Code, Codex, OpenCode, Cursor,
-Cline, ou até um chat sem tool-use pro caminho manual).
+Searches for jobs, evaluates fit, generates a LaTeX CV (1-page A4, ATS-safe),
+and tracks applications — all driven by **your** profile in YAML. No
+candidate data lives in the engine: swap the profile and the same pipeline
+works for any track (backend, frontend, mobile, IoT, data...) and any coding
+agent with file + shell access (Claude Code, Codex, OpenCode, Cursor, Cline,
+or even a plain chat without tool-use for the manual path).
 
-## Como funciona
+> This repo is a working instance for one person's job search. The generic
+> engine (`AGENTS.md`, `rules/`, `workflows/`, `profile/`) is in English so
+> any dev can reuse it. The day-to-day command files (`CLAUDE.md`,
+> `.claude/commands/`, `.opencode/commands/`) stay in Portuguese — that's
+> the maintainer's own daily-use language, and it doesn't affect how the
+> pipeline works for you.
+
+## How it works
 
 ```
  /daily              /apply-batch <n>        /compile-today          /confirm <n>
     │                      │                       │                      │
     ▼                      ▼                       ▼                      ▼
- Busca vagas          Gera CV LaTeX           Compila → PDF          Registra no
- (LinkedIn+freehire)  pra vaga escolhida      ATS check, arquiva     tracker (Notion/
- Rankeia por fit      (gate: deal-breaker                            CSV/nenhum)
+ Search jobs          Generate LaTeX CV      Compile → PDF          Register in
+ (LinkedIn+freehire)  for chosen job         ATS check, archive     tracker (Notion/
+ Rank by fit          (gate: deal-breaker                            CSV/none)
                        + score ≥60%)
 ```
 
-Cada passo lê `profile/candidate.yaml` (seus dados) + `rules/` (regras
-universais de CV/fit/ATS) — nada hardcoded no motor. Ver [AGENTS.md](AGENTS.md)
-pra arquitetura completa.
+Every step reads `profile/candidate.yaml` (your data) + `rules/` (universal
+CV/fit/ATS rules) — nothing hardcoded in the engine. See [AGENTS.md](AGENTS.md)
+for the full architecture.
 
-## Pré-requisitos
+## Prerequisites
 
-- Um agente de código com acesso a arquivo + shell (Claude Code, Codex, OpenCode...)
-- Python 3 + PyYAML — `python3 -c "import yaml"` pra checar
-- [Bun](https://bun.sh) — pras CLIs de busca de vaga
-- LaTeX (`pdflatex`) + `pdftotext` (poppler-utils) — pra compilar e checar ATS
+- A coding agent with file + shell access (Claude Code, Codex, OpenCode...)
+- Python 3 + PyYAML — check with `python3 -c "import yaml"`
+- [Bun](https://bun.sh) — for the job search CLIs
+- LaTeX (`pdflatex`) + `pdftotext` (poppler-utils) — to compile and ATS-check
 
-Instalação detalhada: [SETUP.md](SETUP.md).
+Detailed install steps: [SETUP.md](SETUP.md).
 
-## Começando
+## Getting started
 
 ```bash
-# 1. Seu profile (nunca invente dado — deixe em branco o que não souber)
+# 1. Your profile (never invent data — leave blank what you don't know)
 cp profile/candidate.example.yaml profile/candidate.yaml
-# preencha profile/candidate.yaml com seus dados reais
+# fill in profile/candidate.yaml with your real data
 python3 scripts/validate_profile.py
 
-# 2. CLIs de busca
+# 2. Job search CLIs
 cd .agents/skills/linkedin-search/cli && bun install && cd ../../../..
 cd .agents/skills/freehire-search/cli && bun install && cd ../../../..
 ```
 
-Depois, dentro do seu agente de código:
+Then, inside your coding agent:
 
 ```
-/daily              → busca vagas, rankeia por fit score
-/apply-batch 1,2,3  → gera CV pras vagas escolhidas
-/compile-today      → compila, roda ATS check, arquiva
-/confirm 1,2,3      → registra candidatura enviada no tracker
+/daily              → search jobs, rank by fit score
+/apply-batch 1,2,3  → generate CVs for the jobs you picked
+/compile-today      → compile, run ATS check, archive
+/confirm 1,2,3      → register the sent application in the tracker
 ```
 
-## Comandos
+## Commands
 
-| Comando | O que faz |
+| Command | What it does |
 |---|---|
-| `/daily` | Scrape LinkedIn + freehire, deduplica, rankeia por fit score |
-| `/apply-batch <índices\|url>` | Gera CV `.tex` pras vagas escolhidas — barra deal-breaker e score < 60% antes de gastar esforço |
-| `/compile-today` | Compila `.tex` → PDF, roda ATS check, arquiva — **não toca no tracker** |
-| `/confirm <índices>` | Único comando que registra "Aplicado" no tracker configurado |
+| `/daily` | Scrape LinkedIn + freehire, deduplicate, rank by fit score |
+| `/apply-batch <indices\|url>` | Generate a `.tex` CV for chosen jobs — blocks on deal-breaker or score < 60% before spending effort |
+| `/compile-today` | Compile `.tex` → PDF, run ATS check, archive — **never touches the tracker** |
+| `/confirm <indices>` | Only command that registers "Applied" in the tracker |
 
-## Arquitetura
+## Architecture
 
-| Pasta | Conteúdo |
+| Folder | Content |
 |---|---|
-| `profile/` | Seus dados (`candidate.yaml`, gitignored) — comece por `candidate.example.yaml` |
-| `rules/` | Regras universais: CV, fit score, ATS, entrevista — sem dado de ninguém |
-| `workflows/` | Passos operacionais de cada comando acima |
-| `templates/` | Template LaTeX genérico (placeholders resolvidos pelo profile) |
-| `scripts/` | Validação de profile, compilação em lote, tracker CSV |
-| `.agents/skills/` | CLIs de busca (LinkedIn, freehire) |
+| `profile/` | Your data (`candidate.yaml`, gitignored) — start from `candidate.example.yaml` |
+| `rules/` | Universal rules: CV, fit score, ATS, interview — no one's personal data |
+| `workflows/` | Operational steps for each command above |
+| `templates/` | Generic LaTeX template (placeholders resolved from the profile) |
+| `scripts/` | Profile validation, batch compilation, CSV tracker |
+| `.agents/skills/` | Job search CLIs (LinkedIn, freehire) |
 
-Detalhe completo, incluindo por que cada pasta existe: [AGENTS.md](AGENTS.md).
+Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
 
-## Se algo quebrar
+## Troubleshooting
 
-| Sintoma | Onde olhar |
+| Symptom | Where to look |
 |---|---|
-| `/daily` não acha vaga nenhuma | LinkedIn pode ter bloqueado — tenta só com freehire, ou cola a URL direto no `/apply-batch` |
-| CV saiu com mais de 1 página | `/compile-today` já barra isso sozinho (não registra, não arquiva, aparece no relatório) — corte conteúdo seguindo `rules/cv-rules.md` e rode `/compile-today` de novo |
-| `/compile-today` deu erro de compilação | Log do pdflatex aparece no relatório — geralmente é caractere especial não escapado |
-| Vaga já apareceu antes | `/daily` filtra pelo tracker **e** pelos arquivos locais (`documents/applications/`, `daily/*/*.json`) pra pegar candidatura em andamento ainda não confirmada |
-| Esqueci de rodar `/confirm` | Sem problema — o CV já tá compilado e arquivado localmente, o tracker só fica desatualizado até você rodar `/confirm <número>`, não precisa ser no mesmo dia |
+| `/daily` finds no jobs | LinkedIn may have blocked scraping — try freehire only, or paste the URL directly into `/apply-batch` |
+| CV came out longer than 1 page | `/compile-today` already blocks this on its own (won't register, won't archive, shows up in the report) — trim content following `rules/cv-rules.md` and rerun `/compile-today` |
+| `/compile-today` failed to compile | The pdflatex log shows up in the report — usually an unescaped special character |
+| A job showed up before | `/daily` filters against the tracker **and** local files (`documents/applications/`, `daily/*/*.json`) to catch an in-progress application that hasn't been confirmed yet |
+| Forgot to run `/confirm` | No problem — the CV is already compiled and archived locally, the tracker just stays out of date until you run `/confirm <number>`; doesn't have to be the same day |
 
-## Outros documentos
+## Other documents
 
-- [AGENTS.md](AGENTS.md) — arquitetura completa, agnóstica de agente/LLM
-- [SETUP.md](SETUP.md) — instalar dependências
-- [OPENCODE.md](OPENCODE.md) — modelos grátis do OpenCode e qual usar em cada tarefa
-- [documents/README.md](documents/README.md) — como fica organizada a pasta de candidaturas (local, gitignored)
+- [AGENTS.md](AGENTS.md) — full architecture, agent/LLM-agnostic
+- [SETUP.md](SETUP.md) — installing dependencies
+- [OPENCODE.md](OPENCODE.md) — OpenCode's free models and which to use for each task
+- [documents/README.md](documents/README.md) — how the applications folder is organized (local, gitignored)
 
-## Créditos
+## Credits
 
-As CLIs de busca (`.agents/skills/linkedin-search/`, `.agents/skills/freehire-search/`)
-foram adaptadas a partir de trechos de [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search) (não é um fork).
+The job search CLIs (`.agents/skills/linkedin-search/`, `.agents/skills/freehire-search/`)
+were adapted from parts of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search) (not a fork).
