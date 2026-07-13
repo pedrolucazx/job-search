@@ -1,0 +1,157 @@
+# candidate.example.yaml — TEMPLATE (dados fictícios)
+#
+# Isto é a DIREÇÃO: copie este arquivo para candidate.yaml (gitignored) e
+# preencha com seus dados reais. Exemplo usa track "mobile" de propósito —
+# o formato é o mesmo pra qualquer trilha (backend, frontend, fullstack,
+# iot, data, devops...). Veja candidate.schema.yaml pra descrição de cada campo.
+#
+# Regra de ouro (rules/README.md): nunca inventar dado que não existe.
+# Se um campo não se aplica a você, apague-o ou deixe vazio — nunca preencha
+# com algo fictício "pra não ficar em branco".
+
+profile_version: "1.1"
+last_updated: "2026-01-01"
+
+personal:
+  name: "Alex Devsson"
+  email: "alex.devsson@example.com"
+  phone: "+55 11 90000-0000"
+  location: "São Paulo, SP — Brasil"
+  linkedin: "linkedin.com/in/alexdevsson"
+  github: "github.com/alexdevsson"
+  portfolio: "alexdevsson.dev"
+
+track: "mobile"
+
+education:
+  - institution: "Universidade Exemplo (UEX)"
+    course: "Bacharelado em Sistemas de Informação"
+    degree: "Bacharelado"
+    status: "concluído"
+    start: "2018"
+    end: "2022"
+    description: ""
+
+languages:
+  - language: "Português"
+    level: "Nativo"
+  - language: "Inglês"
+    level: "Avançado (C1)"
+    institution: "Cultura Inglesa"
+    description: ""
+
+skills:
+  mobile:
+    - name: "Kotlin"
+      level: "advanced"
+      years: 4
+    - name: "Jetpack Compose"
+      level: "advanced"
+      years: 2
+    - name: "Swift"
+      level: "intermediate"
+      years: 2
+  backend:
+    - name: "Node.js"
+      level: "intermediate"
+      years: 2
+  database:
+    - name: "SQLite"
+      level: "advanced"
+      years: 3
+    - name: "Firebase"
+      level: "intermediate"
+      years: 2
+  devops:
+    - name: "Fastlane"
+      level: "intermediate"
+      years: 1
+    - name: "CI/CD (GitHub Actions)"
+      level: "intermediate"
+      years: 2
+
+professional_experience:
+  - company: "Empresa Exemplo Mobile Ltda"
+    role: "Desenvolvedor Mobile Pleno"
+    period: "Jan 2023 – Presente"
+    duration_note: "3+ anos — nunca arredondar além de 1 ano"
+    location: "São Paulo, SP (Híbrido)"
+    projects:
+      - id: "A"
+        name: "App de Delivery XPTO"
+        stack: ["Kotlin", "Jetpack Compose", "Coroutines", "Retrofit"]
+      - id: "B"
+        name: "SDK de Pagamentos Interno"
+        stack: ["Swift", "SwiftUI", "Combine"]
+    responsibilities:
+      - "Desenvolvimento de features Android nativas com Kotlin e Jetpack Compose"
+      - "Integração com APIs REST via Retrofit e Coroutines"
+      - "Publicação e versionamento na Play Store via Fastlane"
+      - "Testes automatizados com JUnit e Espresso"
+    highlights: []
+
+personal_projects:
+  - id: "P1"
+    name: "Habit Tracker App"
+    description: "App pessoal de hábitos com widget e notificações locais"
+    stack: ["Kotlin", "Jetpack Compose", "Room", "WorkManager"]
+    link: "github.com/alexdevsson/habit-tracker"
+    highlights: []
+  - id: "P2"
+    name: "Estudo Flutter (em progresso)"
+    description: "Projeto de estudo pra migração cross-platform"
+    stack: ["Flutter", "Dart"]
+    link: ""
+    include_only_if: "vaga menciona Flutter"
+    highlights: []
+
+certifications:
+  - name: "Android Developer — curso"
+    issuer: "Plataforma Exemplo"
+    type: "course"
+    note: "curso, não é certificação profissional — não inflar como certificação"
+
+soft_skills:
+  - pt: "Solução de Problemas"
+    en: "Problem Solving"
+  - pt: "Trabalho em Equipe"
+    en: "Team Collaboration"
+  - pt: "Comunicação Técnica"
+    en: "Technical Communication"
+  - pt: "Adaptabilidade"
+    en: "Adaptability"
+  - pt: "Metodologias Ágeis"
+    en: "Agile / Scrum / Kanban"
+  - pt: "Aprendizado Contínuo"
+    en: "Continuous Learning"
+
+preferences:
+  job_types: ["CLT", "PJ"]
+  work_modes: ["remoto", "híbrido"]
+  salary_range:
+    min: 8000
+    max: 14000
+    currency: "BRL"
+  target_roles:
+    - "Mobile Developer"
+    - "Android Developer"
+  target_industries:
+    - "delivery"
+    - "fintech"
+  deal_breakers:
+    - "100% presencial"
+    - "Sem app publicado em produção"
+  seniority_by_stack:
+    "Kotlin/Android": "Pleno/Sênior"
+    "Swift/iOS": "Júnior/Pleno"
+  avoid_industries: []
+
+tracker:
+  backend: "csv"
+  csv:
+    path: "documents/applications.csv"
+  # notion: (opcional — só preencher se backend: notion)
+  #   database_id: ""
+  #   data_source_id: ""
+  #   stack_tags: []
+  #   gap_tags: []

@@ -1,0 +1,110 @@
+% CV — template genérico (LaTeX, A4, 1 página, ATS-safe)
+% Placeholders {{...}} são resolvidos a partir de profile/candidate.yaml
+% pelas regras em rules/cv-rules.md — nunca hardcode dado de candidato aqui.
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage[top=1.3cm, bottom=1.3cm, left=1.7cm, right=1.7cm]{geometry}
+
+\usepackage{xcolor}
+\definecolor{navy}{HTML}{1F497D}
+\definecolor{darkgray}{HTML}{505050}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{colorlinks=true, urlcolor=navy, linkcolor=navy}
+
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{parskip}
+\setlength{\parskip}{0pt}
+
+\titleformat{\section}
+  {\fontsize{11}{13}\bfseries\color{navy}}
+  {}{0em}{\MakeUppercase}
+  [\vspace{-5pt}{\color{navy}\rule{\linewidth}{0.8pt}}]
+\titlespacing*{\section}{0pt}{7pt}{3pt}
+
+\setlist[itemize]{
+  leftmargin=1.4em,
+  itemsep=1pt,
+  parsep=0pt,
+  topsep=1pt,
+  label=\textbullet
+}
+
+\newcommand{\cvdate}[1]{{\small\color{darkgray}#1}}
+\newcommand{\cvloc}[1]{{\small\color{darkgray}#1}}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\fontsize{18}{22}\bfseries {{NOME}}}\par\vspace{2pt}
+  {\fontsize{10.5}{13}\selectfont {{CARGO_ALVO}} $\cdot$ {{TECH-1}} $\cdot$ {{TECH-2}} $\cdot$ {{TECH-3}}}\par\vspace{2pt}
+  {\small
+  \href{mailto:{{EMAIL}}}{{{EMAIL}}} $\cdot$
+  {{TELEFONE}} $\cdot$
+  \href{https://{{LINKEDIN}}}{{{LINKEDIN}}} $\cdot$
+  \href{https://{{GITHUB}}}{{{GITHUB}}} $\cdot$
+  \href{https://{{PORTFOLIO}}}{{{PORTFOLIO}}} $\cdot$
+  {{LOCALIZACAO}}
+  }
+\end{center}
+
+\section{Resumo Profissional / Professional Summary}
+[RESUMO PERSONALIZADO — alinhado à vaga, baseado só em profile/candidate.yaml]
+
+\section{Habilidades T\'{e}cnicas / Technical Skills}
+\textbf{[CATEGORIA 1]:} [SKILLS ORDENADAS POR OVERLAP COM A VAGA]\par
+\textbf{[CATEGORIA 2]:} [SKILLS]\par
+\textbf{[CATEGORIA 3]:} [SKILLS]\par
+\textbf{Soft Skills:} [6 SOFT SKILLS DO PROFILE, FORMATO BILÍNGUE]
+
+\section{Experi\^{e}ncia Profissional / Work Experience}
+
+{\fontsize{10.5}{13}\bfseries {{CARGO}}} $\vert$ {{EMPRESA}} \hfill \cvdate{{{PERIODO}}}\par
+\cvloc{{{LOCAL}}}\par
+
+\begin{itemize}
+  \item [BULLET 1 — mais relevante para a vaga]
+  \item [BULLET 2]
+  \item [BULLET 3]
+  \item [BULLET 4]
+\end{itemize}
+
+\section{Projetos / Projects}
+
+\textbf{[PROJETO PRINCIPAL]} --- \href{https://{{LINK_PROJETO}}}{{{LINK_PROJETO}}}\par
+\begin{itemize}
+  \item [DESCRICAO]
+\end{itemize}
+
+\textbf{[PROJETO SECUNDARIO]} --- \href{https://{{LINK_PROJETO_2}}}{{{LINK_PROJETO_2}}}\par
+\begin{itemize}
+  \item [DESCRICAO]
+\end{itemize}
+
+% TRAVADO — copiar profile/candidate.yaml -> education EXATAMENTE, sem reformular
+\section{Forma\c{c}\~{a}o Acad\^{e}mica / Education}
+
+\textbf{{{CURSO_1}}} $\vert$ {{INSTITUICAO_1}} \hfill \cvdate{{{PERIODO_1}}}\par\vspace{2pt}
+
+\textbf{{{CURSO_2}}} $\vert$ {{INSTITUICAO_2}} \hfill \cvdate{{{PERIODO_2}}}\par
+\begin{itemize}
+  \item {{DESCRICAO_CURSO_2}}
+\end{itemize}
+
+% TRAVADO — copiar profile/candidate.yaml -> languages EXATAMENTE
+\section{Idiomas / Languages}
+
+\begin{itemize}
+  \item {{IDIOMA_1}}: {{NIVEL_1}} --- {{DETALHE_1}}
+  \item {{IDIOMA_2}}: {{NIVEL_2}}
+\end{itemize}
+
+\end{document}

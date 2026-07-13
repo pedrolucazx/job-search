@@ -1,0 +1,37 @@
+# Compiled PDFs
+*.pdf
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Personal documents (CVs, applications, etc.)
+documents/
+daily/
+
+# Dado real do candidato — só o .example.yaml é commitado
+profile/candidate.yaml
+
+# Environment variables
+.env
+
+# Node/Bun
+node_modules/
+bun.lockb
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Config local de máquina (permissões específicas do seu ambiente)
+.claude/settings.local.json
+
+# Logs/estado do Playwright MCP
+.playwright-mcp/

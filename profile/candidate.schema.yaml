@@ -1,0 +1,122 @@
+# candidate.schema.yaml — Formato do profile (documentação, não validador executável)
+#
+# Este arquivo descreve o FORMATO dos dados de profile/candidate.yaml.
+# Não é regra de comportamento (isso vive em rules/) — é só a forma que o dado
+# de qualquer dev deve seguir. scripts/validate_profile.py usa isto como
+# referência humana; a validação de fato é código Python simples (sem lib de
+# JSON Schema, pra não adicionar dependência).
+#
+# Convenção: campos marcados "(opcional)" podem ser omitidos ou vazios ([]/"").
+# Todo o resto é obrigatório pro pipeline funcionar.
+
+profile_version: "string — versão do schema, ex: '1.1'"
+last_updated: "string — data YYYY-MM-DD da última edição do candidate.yaml"
+
+# TRAVADO no CV final — nunca reescrever, parafrasear ou resumir.
+personal:
+  name: "string"
+  email: "string"
+  phone: "string"
+  location: "string — cidade, estado, país"
+  linkedin: "string — url ou handle"
+  github: "string — url ou handle"
+  portfolio: "string (opcional)"
+
+# Rótulo livre, sem vocabulário fixo — usado só como contexto pro agente,
+# nunca como filtro rígido. Exemplos: backend, frontend, fullstack, mobile,
+# iot, data, devops, qa, ml. Pode ser mais de um, separados por vírgula.
+track: "string"
+
+# TRAVADO — copiar exatamente como está no CV, nunca reformular.
+education:
+  - institution: "string"
+    course: "string"
+    degree: "string"
+    status: "string — cursando | concluído | trancado"
+    start: "string — ano ou data"
+    end: "string — ano, data, ou 'Em andamento'"
+    description: "string (opcional) — ex: disciplinas de curso técnico"
+
+# TRAVADO — copiar exatamente.
+languages:
+  - language: "string"
+    level: "string"
+    institution: "string (opcional)"
+    description: "string (opcional)"
+
+# Categorias livres (o dev escolhe as chaves: backend, frontend, mobile,
+# database, devops, embedded, data, etc.) — a engine nunca assume uma lista
+# fixa de categorias.
+skills:
+  <categoria_livre>:
+    - name: "string"
+      level: "string — basic | intermediate | advanced"
+      years: "number"
+
+# Experiência profissional. Um item por vínculo empregatício.
+professional_experience:
+  - company: "string"
+    role: "string"
+    period: "string — ex: 'Nov 2021 – Fev 2026'"
+    duration_note: "string (opcional) — ex: '4+ anos — nunca arredondar além de 1 ano'"
+    location: "string"
+    # (opcional) uso pra quem trabalhou em múltiplos projetos/clientes dentro
+    # do mesmo vínculo (comum em consultoria/squad) — cada um com stack própria
+    projects:
+      - id: "string — identificador curto, ex: 'A'"
+        name: "string"
+        stack: ["string", "..."]
+    responsibilities: ["string", "..."] # bullets candidatos, a engine escolhe por overlap com a vaga
+    highlights: ["string", "..."] # (opcional)
+
+# Projetos pessoais/open-source.
+personal_projects:
+  - id: "string"
+    name: "string"
+    description: "string"
+    stack: ["string", "..."]
+    link: "string (opcional) — omitir se o repo não foi confirmado, nunca inventar slug"
+    include_only_if: "string (opcional) — condição textual, ex: 'vaga menciona Ruby'"
+    highlights: ["string", "..."] # (opcional)
+
+# (opcional) Diferenciar sempre curso de certificação real — nunca inflar.
+certifications:
+  - name: "string"
+    issuer: "string"
+    type: "string — certification | course"
+    note: "string (opcional) — ex: 'curso, não é certificação profissional'"
+
+# Sempre bilíngue. Recomendado exatamente 6 (regra de CV vive em rules/cv-rules.md).
+soft_skills:
+  - pt: "string"
+    en: "string"
+
+preferences:
+  job_types: ["string", "..."] # ex: CLT, PJ
+  work_modes: ["string", "..."] # ex: remoto, híbrido, presencial
+  salary_range: # (opcional)
+    min: "number"
+    max: "number"
+    currency: "string"
+  target_roles: ["string", "..."]
+  target_industries: ["string", "..."]
+  # Exclusões duras — vaga que bate aqui nunca entra na tabela do /daily,
+  # independente do score. Ver rules/job-evaluation.md.
+  deal_breakers: ["string", "..."]
+  # (opcional) nível-alvo por stack, quando o dev tem stack primária vs secundária
+  # com expectativa de senioridade diferente. Formato livre: {stack: nivel_alvo}
+  seniority_by_stack:
+    <stack_livre>: "string"
+  avoid_industries: ["string", "..."] # (opcional)
+
+# Onde as candidaturas confirmadas são registradas. Nunca hardcoded na engine —
+# ver rules/README.md e workflows/confirm.md.
+tracker:
+  backend: "string — csv | notion | none"
+  notion: # só preencher se backend == notion (config pessoal, não do motor)
+    database_id: "string"
+    data_source_id: "string"
+    stack_tags: ["string", "..."] # vocabulário livre do dono do workspace Notion
+    gap_tags: ["string", "..."]
+  csv: # backend padrão recomendado — zero dependência externa
+    path: "string — ex: 'documents/applications.csv'"
