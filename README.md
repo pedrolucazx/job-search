@@ -93,6 +93,16 @@ Then, inside your coding agent:
 
 Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
 
+## Tests
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+Covers `scripts/validate_profile.py` and `scripts/track_append.py` (stdlib
+`unittest`, zero extra dependency), plus a guard that
+`profile/candidate.example.yaml` always passes validation.
+
 ## Troubleshooting
 
 | Symptom | Where to look |
