@@ -1,9 +1,10 @@
 ---
-description: Compila os CVs do dia, roda ATS check e arquiva (sem tocar no tracker)
+description: Compiles today's CVs, runs the ATS check, and archives (doesn't touch the tracker)
 agent: build
 model: opencode/north-mini-code-free
 ---
 
-Leia `workflows/compile.md` e execute os passos descritos ali para a data em
-`$ARGUMENTS` (ou hoje, se omitida). O email/telefone do ATS check vêm de
-`profile/candidate.yaml` via `scripts/validate_profile.py` — não hardcoded.
+Read `workflows/compile.md` and execute the steps described there for the
+date in `$ARGUMENTS` (or today, if omitted). The ATS check's email/phone
+come from `profile/candidate.yaml` via `scripts/validate_profile.py` — never
+hardcoded.

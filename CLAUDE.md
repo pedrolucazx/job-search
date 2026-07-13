@@ -1,36 +1,37 @@
-# 🎯 Job Search — Workspace de Recolocação
+# 🎯 Job Search — Job-Hunt Workspace
 
-Este repositório é seu centro de comando de guerra pra recolocação.
-Claude Code (Opus) gera CVs com precisão cirúrgica; OpenCode faz compilação, ATS check e registro no tracker.
+This repository is your job-hunt command center.
+Claude Code (Opus) generates CVs with surgical precision; OpenCode handles compilation, ATS checks, and tracker registration.
 
-Arquitetura completa (agnóstica de agente/LLM): ver `AGENTS.md`.
+Full architecture (agent/LLM-agnostic): see `AGENTS.md`.
 
-## Regras Absolutas
-1. NUNCA inventar dados, métricas, projetos ou tecnologias fora de `profile/candidate.yaml`
-2. Seções Formação e Idiomas são TRAVADAS — copiar exatamente como estão
-3. CV deve ter EXATAMENTE 1 página A4
-4. Gap analysis sempre com tabela full/partial/absent
-5. Soft skills sempre bilíngue "Português (English)", conforme `profile/candidate.yaml`
-6. NUNCA usar duas colunas, tabelas, gráficos, ícones ou imagens no LaTeX
+## Absolute Rules
+1. NEVER invent data, metrics, projects, or technologies outside `profile/candidate.yaml`
+2. Education and Languages sections are LOCKED — copy exactly as they are
+3. The CV must be EXACTLY 1 A4 page
+4. Gap analysis always with a full/partial/absent table
+5. Soft skills always bilingual "Português (English)", per `profile/candidate.yaml`
+6. NEVER use two columns, tables, charts, icons, or images in the LaTeX
 
-(Lista completa e comentada em `rules/README.md`.)
+(Full, annotated list in `rules/README.md`.)
 
-## Comandos Disponíveis
-| Comando | O que faz | Executa |
+## Available Commands
+| Command | What it does | Runs on |
 |---|---|---|
-| `/daily` | Scrape LinkedIn + freehire, rankeia vagas, apresenta tabela | Claude Code |
-| `/apply-batch 1,2,3,8` | Gera CVs .tex para N vagas selecionadas (índice ou URL colada) | Claude Code |
-| `/compile-today` | Compila .tex → .pdf → ATS check → arquiva (não toca no tracker) | OpenCode |
-| `/confirm 1,2,3` | Único comando que registra "Aplicado" no tracker configurado (ver `profile/candidate.yaml → tracker`) | Claude Code |
+| `/daily` | Scrapes LinkedIn + freehire, ranks jobs, presents a table | Claude Code |
+| `/apply-batch 1,2,3,8` | Generates .tex CVs for N selected jobs (index or pasted URL) | Claude Code |
+| `/compile-today` | Compiles .tex → .pdf → ATS check → archives (doesn't touch the tracker) | OpenCode |
+| `/confirm 1,2,3` | Only command that registers "Applied" in the configured tracker (see `profile/candidate.yaml → tracker`) | Claude Code |
+| `/interview-prep <company>` | Generates a presentation script + critical fit analysis for an already-confirmed job (doesn't cover the technical round) | Claude Code / OpenCode |
 
-## Onde estão as regras e os dados (leia antes de executar comandos)
-- `profile/candidate.yaml` — dados canônicos do candidato ativo (gitignored; copiar de `profile/candidate.example.yaml`)
-- `rules/` — regras universais de CV, avaliação de fit, ATS, entrevista
-- `workflows/` — passos operacionais de cada comando acima
+## Where the rules and data live (read before running commands)
+- `profile/candidate.yaml` — the active candidate's canonical data (gitignored; copy from `profile/candidate.example.yaml`)
+- `rules/` — universal rules for CV, fit evaluation, ATS, interview
+- `workflows/` — operational steps for each command above
 
-## Formato de Saída (bridge Claude Code → OpenCode)
-Claude Code gera:
-- `documents/cv/main_<empresa>.tex` — CV em LaTeX
-- `daily/<data>/<empresa>.json` — Metadados da candidatura
+## Output Format (Claude Code → OpenCode bridge)
+Claude Code generates:
+- `documents/cv/main_<company>_<role>.tex` — CV in LaTeX (role in the name avoids overwriting when there's more than one job at the same company)
+- `daily/<date>/<company>_<role>.json` — Application metadata
 
-OpenCode lê e processa.
+OpenCode reads and processes it.

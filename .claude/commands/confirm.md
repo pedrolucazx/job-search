@@ -1,3 +1,3 @@
-Leia `workflows/confirm.md` e `profile/candidate.yaml` (campo `tracker.backend`
-decide se o registro vai pro Notion, CSV ou nenhum). Execute os passos
-descritos ali para os índices/nomes recebidos em `$ARGUMENTS`.
+Read `workflows/confirm.md` and `profile/candidate.yaml` (the `tracker.backend`
+field decides whether registration goes to Notion, CSV, or none). Execute the
+steps described there for the indices/names received in `$ARGUMENTS`.

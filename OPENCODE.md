@@ -1,95 +1,101 @@
-# OpenCode — Sequência do Dia e Modelos Grátis
+# OpenCode — Daily Sequence and Free Models
 
-Guia de uso do OpenCode (IA grátis, via OpenCode Zen) como segundo ator do pipeline.
-Objetivo: Claude Code (pago) faz o trabalho que exige julgamento fino; OpenCode (grátis)
-faz o trabalho mecânico. Poupa token do Claude Code Pro mesmo com RTK.
+Guide for using OpenCode (free AI, via OpenCode Zen) as the pipeline's second actor.
+Goal: Claude Code (paid) does the work that requires fine judgment; OpenCode (free)
+does the mechanical work. Saves Claude Code Pro tokens even with RTK.
 
 ---
 
-## 1. Sequência completa do dia
+## 1. Full daily sequence
 
-### Passo 1 — Claude Code (`claude` na raiz do repo)
+### Step 1 — Claude Code (`claude` at the repo root)
 
 ```
 /daily
 ```
-Scrape (LinkedIn + freehire) → dedup no Notion → gap score → tabela rankeada.
-Você escolhe os números.
+Scrape (LinkedIn + freehire) → dedup in Notion → gap score → ranked table.
+You pick the numbers.
 
 ```
 /apply-batch 1,2,3,8
 ```
-Gera `documents/cv/main_<empresa>.tex` + `daily/<data>/<empresa>.json` pra cada vaga escolhida.
-Aceita índice da tabela ou URL colada direto (vaga achada fora do `/daily`).
+Generates `documents/cv/main_<company>_<role>.tex` + `daily/<date>/<company>_<role>.json` for each chosen job
+(role in the name avoids overwriting when there's more than one job at the same company).
+Accepts an index from the table or a pasted URL directly (a job found outside `/daily`).
 
-Sair do Claude Code (`exit` / Ctrl+D) quando os `.tex` estiverem prontos.
+Exit Claude Code (`exit` / Ctrl+D) once the `.tex` files are ready.
 
-### Passo 2 — OpenCode (`opencode` na raiz do repo)
+### Step 2 — OpenCode (`opencode` at the repo root)
 
 ```
 /compile-today
 ```
-Lê `daily/<data>/*.json` → `pdflatex` cada `.tex` (via `scripts/compile-all.sh`) →
-ATS check → registra no Notion via MCP → arquiva em `documents/applications/`.
+Reads `daily/<date>/*.json` → `pdflatex` on each `.tex` (via `scripts/compile-all.sh`) →
+ATS check → registers in Notion via MCP → archives into `documents/applications/`.
 
-Implementado em `.opencode/commands/compile-today.md`, já com `north-mini-code-free`
-fixado no frontmatter — não precisa escolher modelo na mão.
+Implemented in `.opencode/commands/compile-today.md`, already with
+`north-mini-code-free` pinned in the frontmatter — no need to pick a model by hand.
 
-> ⚠️ **Pendência de setup**: `pdflatex` não está instalado neste ambiente
+> ⚠️ **Setup pending**: `pdflatex` isn't installed in this environment
 > (`sudo apt install texlive-latex-base texlive-latex-recommended texlive-fonts-recommended`,
-> ver `SETUP.md`). Sem isso o Passo 1 do `/compile-today` não roda. Ainda não testei
-> a compilação ponta a ponta — só validei que a leitura do `cv_tex` do JSON está
-> correta.
+> see `SETUP.md`). Without it, `/compile-today`'s Step 1 won't run. Haven't yet
+> tested the compilation end-to-end — only validated that reading `cv_tex` from
+> the JSON works correctly.
 
 ---
 
-## 2. Modelos grátis disponíveis (OpenCode Zen)
+## 2. Available free models (OpenCode Zen)
 
-| Modelo | O que se sabe |
+| Model | What's known |
 |---|---|
-| `opencode/big-pickle` | Modelo "stealth" (nome código, provedor não revela qual é). Sem sinal de tamanho/velocidade no nome. |
-| `opencode/deepseek-v4-flash-free` | Linha DeepSeek, variante "flash" (otimizada pra velocidade/custo). **Seu padrão atual no OpenCode.** |
-| `opencode/mimo-v2.5-free` | Linha MiMo (Xiaomi) — historicamente essa linha foca em raciocínio/matemática relativo ao tamanho. |
-| `opencode/north-mini-code-free` | "mini" + "code" no nome — sinaliza modelo pequeno/rápido tunado pra código e tool-calling. Contexto de 256K segundo agregadores de terceiros. |
+| `opencode/big-pickle` | A "stealth" model (code name, provider doesn't reveal which one it is). No size/speed signal in the name. |
+| `opencode/deepseek-v4-flash-free` | DeepSeek line, "flash" variant (optimized for speed/cost). **Your current default on OpenCode.** |
+| `opencode/mimo-v2.5-free` | MiMo line (Xiaomi) — historically this line focuses on reasoning/math relative to its size. |
+| `opencode/north-mini-code-free` | "mini" + "code" in the name — signals a small/fast model tuned for code and tool-calling. 256K context per third-party aggregators. |
 
-⚠️ **Isso é heurística de nome, não benchmark**: a documentação oficial do OpenCode Zen
-não publica comparação de capacidade entre esses 4 — só confirma que são grátis por
-tempo limitado (dados de uso podem ser retidos pra melhorar o modelo, evite colar
-informação sensível). Ajuste a tabela abaixo conforme observar na prática.
+⚠️ **This is name-based heuristic, not benchmark**: OpenCode Zen's official
+documentation doesn't publish a capability comparison between these 4 — it only
+confirms they're free for a limited time (usage data may be retained to improve
+the model, avoid pasting sensitive information). Adjust the table below as you
+observe in practice.
 
 ---
 
-## 3. Qual modelo usar em qual tarefa
+## 3. Which model to use for which task
 
-| Tarefa (dentro de `/compile-today`) | Modelo sugerido | Por quê |
+| Task (inside `/compile-today`) | Suggested model | Why |
 |---|---|---|
-| Rodar `pdflatex`, `pdftotext`, parsear JSON, chamar Notion MCP | `north-mini-code-free` | Tool-calling/bash mecânico, pouco julgamento — o "code" no nome é o sinal mais forte que temos. |
-| Interpretar erro de compilação LaTeX (overfull hbox, pacote faltando) e propor fix | `mimo-v2.5-free` | Precisa de raciocínio real sobre a causa do erro, não só seguir passo a passo. |
-| Relatório final do dia / `/status` | `deepseek-v4-flash-free` | Seu padrão atual — resumir texto é tarefa leve, não precisa trocar. |
-| Fallback — se os três acima travarem ou derem resposta ruim numa vaga difícil | `big-pickle` | Reserva sem sinal claro no nome; grátis, então custa zero testar antes de recorrer ao Claude. |
+| Run `pdflatex`, `pdftotext`, parse JSON, call the Notion MCP | `north-mini-code-free` | Mechanical tool-calling/bash, little judgment needed — "code" in the name is the strongest signal we have. |
+| Interpret a LaTeX compile error (overfull hbox, missing package) and propose a fix | `mimo-v2.5-free` | Needs real reasoning about the root cause, not just following steps. |
+| Final daily report / `/status` | `deepseek-v4-flash-free` | Your current default — summarizing text is light work, no need to switch. |
+| Fallback — if the three above get stuck or give a bad answer on a tricky job | `big-pickle` | Reserve option with no clear signal in the name; free, so it costs nothing to try before falling back to Claude. |
 
-Trocar de modelo no meio da sessão do OpenCode: `/models` na TUI, ou fixar por
-comando (Seção 4).
+Switching models mid-OpenCode-session: `/models` in the TUI, or pin it per
+command (Section 4).
 
 ---
 
-## 4. Fixando o modelo por comando (evita escolher manualmente toda vez)
+## 4. Pinning the model per command (avoids picking manually every time)
 
-Comandos custom do OpenCode ficam em `.opencode/commands/*.md`, igual ao
-`.claude/commands/`. O frontmatter aceita `model:`:
+OpenCode's custom commands live in `.opencode/commands/*.md`, just like
+`.claude/commands/`. The frontmatter accepts `model:`:
 
 ```markdown
 ---
-description: Compila os CVs do dia, roda ATS check e registra no Notion
+description: Compiles today's CVs, runs the ATS check, and registers in Notion
 agent: build
 model: opencode/north-mini-code-free
 ---
 
-Leia daily/<data>/*.json e para cada um: compile o .tex com pdflatex,
-rode pdftotext -layout pro ATS check, e registre a candidatura no Notion via MCP.
+Read daily/<date>/*.json and for each one: compile the .tex with pdflatex,
+run pdftotext -layout for the ATS check, and register the application in Notion via MCP.
 ```
 
-Assim `/compile-today` sempre abre com `north-mini-code-free` sem você precisar
-selecionar na hora. Comandos menores (`/ats-check`, `/register-notion`,
-`/status`, `/compile-last`) ficam pra quando forem realmente usados — mesmo
-raciocínio do `/interview`: não construir antes de precisar.
+This way `/compile-today` always opens with `north-mini-code-free` without you
+needing to select it on the spot. Smaller commands (`/ats-check`,
+`/register-notion`, `/status`, `/compile-last`) are left for when they're
+actually used — the same reasoning that held back `/interview-prep` until it
+became a real need (see `.opencode/commands/interview-prep.md`, now
+implemented with `mimo-v2.5-free` — that task requires fine judgment about
+tone/honesty on gaps, not mechanical tool-calling, which is why it doesn't use
+`north-mini-code-free`).

@@ -2,9 +2,9 @@
 name: career-command-center
 version: 2.0.0
 description: >
-  Ponteiro fino pro motor genérico de recolocação. Dado do candidato vive em
-  profile/candidate.yaml, regras universais em rules/, workflows em
-  workflows/. Use esta skill em TODOS os comandos de aplicação.
+  Thin pointer into the generic job-hunt engine. Candidate data lives in
+  profile/candidate.yaml, universal rules in rules/, workflows in
+  workflows/. Use this skill on ALL application commands.
 context: fork
 allowed-tools:
   - Bash(bun run .agents/skills/linkedin-search/*)
@@ -22,11 +22,11 @@ allowed-tools:
 
 # Career Command Center
 
-Skill central que orquestra a busca de emprego. Não contém dado de candidato
-nem regra de comportamento — é só o gatilho pro Claude Code carregar:
+Central skill that orchestrates the job search. Contains no candidate data
+or behavior rules — it's just the trigger for Claude Code to load:
 
-1. `profile/candidate.yaml` — dados do candidato ativo
-2. `rules/README.md` (e os demais arquivos de `rules/`) — regras universais
-3. `workflows/` — passos operacionais de cada comando
+1. `profile/candidate.yaml` — the active candidate's data
+2. `rules/README.md` (and the rest of `rules/`) — universal rules
+3. `workflows/` — operational steps for each command
 
-Ver `AGENTS.md` na raiz do repo pra descrição completa da arquitetura.
+See `AGENTS.md` at the repo root for the full architecture description.
