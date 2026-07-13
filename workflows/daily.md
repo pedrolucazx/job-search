@@ -39,6 +39,16 @@ Deduplicate by company + role across sources. Keep each job's source
 (`linkedin`/`freehire`/other) to use later in the tracker, if the backend is
 Notion (`tracker.notion.stack_tags` etc.).
 
+**Filtering blocked companies**: drop any job whose company matches
+`preferences.blocked_companies` (case-insensitive), before anything else —
+no fit score calculated, no full description fetched. This is a company-level
+hard exclusion decided by the dev (e.g. a recruiter with a suspicious volume
+of near-identical postings, a mandatory intro-video gate, or just a bad
+personal experience) — different from `preferences.deal_breakers`, which is
+about a specific job's content, not the company posting it. Don't mention
+these jobs in the ranked table at all, not even as "excluded" — they're
+silently dropped at this stage.
+
 **Detecting jobs with no CV needed**: if the destination platform uses an
 already-registered profile instead of a PDF (e.g. certain ATS platforms —
 this varies by market/country, adjust per profile), mark the job as

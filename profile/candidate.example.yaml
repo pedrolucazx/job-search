@@ -146,6 +146,10 @@ preferences:
     "Kotlin/Android": "Mid-level/Senior"
     "Swift/iOS": "Junior/Mid-level"
   avoid_industries: []
+  # Companies to never show again, filtered out before scoring — e.g. a
+  # recruiter/agency you've personally decided to avoid (suspicious posting
+  # volume, bad experience, mandatory intro video, etc.)
+  blocked_companies: []
 
 tracker:
   backend: "csv"

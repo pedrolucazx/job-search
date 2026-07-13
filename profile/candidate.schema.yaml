@@ -108,6 +108,12 @@ preferences:
   seniority_by_stack:
     <free_stack>: "string"
   avoid_industries: ["string", "..."] # (optional)
+  # (optional) Company-level hard exclusion — filtered out before fit score
+  # is even calculated, no job description read. Different from
+  # deal_breakers (which is about job content, not the company itself).
+  # Use for recruiters/companies the dev has personally decided to avoid
+  # (e.g. suspicious volume of near-identical postings, bad reputation).
+  blocked_companies: ["string", "..."]
 
 # Where confirmed applications get registered. Never hardcoded in the
 # engine — see rules/README.md and workflows/confirm.md.
