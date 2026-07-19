@@ -57,6 +57,31 @@ If `preferences.deal_breakers` includes something about work arrangement
 description before applying the exclusion** — search tags (`--remote
 remote` etc.) aren't reliable, platforms have mislabeled jobs before.
 
+### Work Arrangement: Silent Full Descriptions (flag, don't exclude)
+
+LinkedIn's public/guest job pages (what this repo's scraper reads) don't
+expose the "✓ Remoto" workplace-type badge shown in the logged-in app UI —
+confirmed empirically 2026-07-15: neither the `jobs-guest` detail endpoint
+nor the public `/jobs/view/<id>` page carry a `workplaceType`,
+`jobLocationType`, or JSON-LD `JobPosting` field in any posting checked.
+Getting that badge would need an authenticated LinkedIn session (Voyager
+API or a logged-in Playwright session) — not worth the risk of the
+candidate's real account getting banned over a job-fit heuristic.
+
+So when the full description (WebFetch/Playwright) has **no**
+work-arrangement language anywhere — no "remoto"/"híbrido"/"presencial"/
+"home office", positive or negative — that's inconclusive, not a deal-breaker
+match. Don't exclude on silence:
+
+1. Generate the CV normally if the real score otherwise clears 60%.
+2. Add a note to the gap table / report: "modelo de trabalho não confirmado
+   no texto do anúncio — conferir o badge Remoto/Híbrido/Presencial na
+   página do LinkedIn antes de aplicar."
+
+Only exclude on an **explicit** signal in the full description — "modelo
+híbrido", "presencial em <cidade>", a fixed office address with no remote
+language nearby, etc. Silence isn't evidence either way.
+
 ## Education Completion Requirement (flag, don't exclude)
 
 If the JD mentions a degree requirement (e.g. "ensino superior", "upper
