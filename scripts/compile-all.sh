@@ -88,17 +88,17 @@ for json_file in "$DAILY_DIR"/*.json; do
 
       while IFS= read -r skill; do
         [ -z "$skill" ] && continue
-        grep -qi -- "$skill" "$txt_file" || ATS_FAILS+=("stack missing: $skill")
+        grep -qFw -- "$skill" "$txt_file" || ATS_FAILS+=("stack missing: $skill")
       done < <(jq -r '.stack[]?' "$json_file")
 
       while IFS= read -r skill; do
         [ -z "$skill" ] && continue
-        grep -qi -- "$skill" "$txt_file" || ATS_FAILS+=("full/partial gap missing: $skill")
+        grep -qFw -- "$skill" "$txt_file" || ATS_FAILS+=("full/partial gap missing: $skill")
       done < <(jq -r '.gaps[]? | select(.status != "absent") | .skill' "$json_file")
 
       while IFS= read -r skill; do
         [ -z "$skill" ] && continue
-        if grep -qi -- "$skill" "$txt_file"; then
+        if grep -qFw -- "$skill" "$txt_file"; then
           ATS_FAILS+=("absent gap APPEARS in the CV (invented data?): $skill")
           ATS_BLOCKED=true
         fi
