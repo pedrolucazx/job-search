@@ -96,6 +96,24 @@ Never round experience time beyond 1 year (e.g. if `duration_note` says
 - Section titles in UPPERCASE, no two columns/tables/icons/images (Absolute
   Rule #6).
 
+## CV Language
+
+Default: bilingual section headers (Portuguese / English), body in
+Portuguese — matches the base template.
+
+If the job posting's own description body is written in English (not just
+an English job title on an otherwise Portuguese posting — check the actual
+body text), generate the CV fully in English instead: English-only section
+headers, translated summary/skills/bullets/project descriptions. Education
+and Languages stay factually locked (same institutions, dates, levels) but
+their labels/descriptions are translated too, for consistency with an
+all-English document — translating for the target audience isn't the kind
+of paraphrasing the lock rule guards against; inventing or softening a fact
+is. Institution proper names are never translated.
+Soft skills stay bilingual per profile, but lead with the CV's primary
+language (English first, Portuguese in parentheses, when the CV is in
+English).
+
 ## Mandatory Checklist Before Delivering
 
 1. No invented data — every bullet/project/skill traceable to
