@@ -17,18 +17,42 @@ profile — they're the basis for step 1's search queries.
 ## 1. Scrape (configurable sources)
 
 Search CLIs available in this repo today: `.agents/skills/linkedin-search/`
-and `.agents/skills/freehire-search/` (both bun, zero API cost). Build
-queries from `preferences.target_roles` and the highest-level skills in
-`skills.<category>` of the active profile — don't use a fixed query list.
+and `.agents/skills/freehire-search/` (both bun, zero API cost). Build two
+query axes from the active profile — don't use a fixed query list:
+
+- `ROLE_QUERY`: `preferences.target_roles` OR-joined into one quoted string
+  (e.g. `"Backend Developer Pleno" OR "Software Engineer" OR "Fullstack
+  Developer"`). One combined call surfaces more distinct postings per page
+  than one call per role, which mostly re-hits the same top-of-feed jobs.
+- `SKILL_QUERY`: the 3-4 highest-`years`/`level` skills across
+  `skills.<category>`, OR-joined the same way (e.g. `"Node.js" OR "NestJS"
+  OR "TypeScript"`). Catches postings whose title doesn't literally match a
+  target role but whose stack is a tight fit — this is what actually
+  drives the fit score in step 3, so it raises match accuracy, not just
+  volume.
 
 ```bash
+QUERIES=("$ROLE_QUERY" "$SKILL_QUERY")
+
 for q in "${QUERIES[@]}"; do
-  bun run .agents/skills/linkedin-search/cli/src/cli.ts search \
-    -q "$q" -l "Brazil" --remote remote --jobage 7 --format json
+  # LinkedIn's page size is fixed at 10 server-side, so pull 4 pages
+  # (40 results/query) instead of just page 1.
+  for page in 1 2 3 4; do
+    bun run .agents/skills/linkedin-search/cli/src/cli.ts search \
+      -q "$q" -l "Brazil" --remote remote --jobage 14 --page "$page" --format json
+  done
+  # freehire's --limit IS the real API page size, so ask for 40 in one call
+  # instead of looping pages.
   bun run .agents/skills/freehire-search/cli/src/cli.ts search \
-    -q "$q" --country BR --remote remote --jobage 7 --format json
+    -q "$q" --country BR --remote remote --jobage 14 --limit 40 --format json
 done
 ```
+
+⚠️ This is ~9 calls/source per run (2 query axes × 4 LinkedIn pages + 1
+freehire call, vs. ~3 calls/source before) — still personal-use volume, but
+if LinkedIn starts responding with 429s, drop to 3 pages before dropping a
+query axis (the skill axis is what raises match accuracy, not the page
+count).
 
 ⚠️ This filters by the search tag, it's not a guarantee — reconfirm the real
 work arrangement in step 2.5 of `apply-batch.md` (see
