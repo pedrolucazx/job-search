@@ -41,7 +41,8 @@ order — nothing else to read first:
 - [ ] Clone this repo (or use "Use this template" on GitHub)
 - [ ] Run `python3 scripts/check_setup.py` — it tells you exactly what's
       missing (Bun, LaTeX, PyYAML...) and asks whether to install everything
-      now. Automatic installation currently supports Debian/Ubuntu.
+      now. Automatic installation currently supports Debian/Ubuntu and
+      recovers interrupted `dpkg` configuration before installing packages.
 - [ ] `cp profile/candidate.example.yaml profile/candidate.yaml`
 - [ ] Open `profile/candidate.yaml` and replace every value with your own
       real data (name, email, skills, experience — see
@@ -170,6 +171,7 @@ always passes validation.
 | Symptom | Where to look |
 |---|---|
 | Not sure what's wrong with your setup | Run `python3 scripts/check_setup.py` first — it checks everything at once and tells you exactly what's missing |
+| `dpkg was interrupted` | Rerun `python3 scripts/check_setup.py` and accept the installation; the installer repairs pending package configuration before continuing |
 | `bash: bun: command not found` | Bun isn't installed — `curl -fsSL https://bun.sh/install \| bash`, then open a new terminal (or `source` your shell config) so it's on your PATH |
 | `pdflatex: command not found` | LaTeX isn't installed — see [SETUP.md](SETUP.md); on Debian/Ubuntu you need `texlive-latex-extra` specifically, not just `texlive-latex-base` (the template uses `titlesec`, which isn't in the base set) |
 | `ModuleNotFoundError: No module named 'yaml'` | PyYAML isn't installed — `pip install pyyaml` (or `pip3 install pyyaml` depending on your system) |

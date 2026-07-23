@@ -43,6 +43,9 @@ The underlying installer can also be run on its own:
 The automatic installer currently supports Debian/Ubuntu systems that use
 `apt`. It only installs missing dependencies and is safe to run again. On a
 different operating system, follow the manual commands in this document.
+Before changing apt packages, the installer safely runs
+`dpkg --configure -a`; this resumes any package configuration interrupted by
+a previous `apt`/`dpkg` operation.
 
 For diagnostics in scripts or CI, without an interactive question:
 ```bash

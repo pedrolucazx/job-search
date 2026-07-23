@@ -19,6 +19,18 @@ run_as_root() {
   fi
 }
 
+repair_dpkg_state() {
+  if ! has dpkg; then
+    return
+  fi
+
+  # `dpkg --audit` can be empty even when apt reports an interrupted dpkg
+  # transaction. `dpkg --configure -a` is idempotent, so run it as a
+  # preflight whenever this installer is about to change apt packages.
+  echo "Checking for interrupted dpkg configuration..."
+  run_as_root dpkg --configure -a
+}
+
 install_apt_dependencies() {
   local packages=()
 
@@ -49,6 +61,7 @@ install_apt_dependencies() {
   fi
 
   if [ "${#packages[@]}" -gt 0 ]; then
+    repair_dpkg_state
     echo "Installing system packages with apt..."
     run_as_root apt-get update
     run_as_root apt-get install -y "${packages[@]}"
