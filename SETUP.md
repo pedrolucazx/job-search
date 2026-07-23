@@ -27,7 +27,32 @@ cd ../../../..
 python3 scripts/check_setup.py
 ```
 Runs all checks at once (bun, pdflatex, pdftotext, pdfinfo, jq, PyYAML) and
-tells you exactly what's missing. Manual verification, if you prefer:
+tells you exactly what's missing. When run in an interactive terminal, it
+offers to install all missing dependencies immediately.
+
+To start the installer directly, without waiting for the prompt:
+```bash
+python3 scripts/check_setup.py --install
+```
+
+The underlying installer can also be run on its own:
+```bash
+./scripts/install-dependencies.sh
+```
+
+The automatic installer currently supports Debian/Ubuntu systems that use
+`apt`. It only installs missing dependencies and is safe to run again. On a
+different operating system, follow the manual commands in this document.
+Before changing apt packages, the installer safely runs
+`dpkg --configure -a`; this resumes any package configuration interrupted by
+a previous `apt`/`dpkg` operation.
+
+For diagnostics in scripts or CI, without an interactive question:
+```bash
+python3 scripts/check_setup.py --no-prompt
+```
+
+Manual verification, if you prefer:
 ```bash
 pdflatex --version
 pdftotext -v
