@@ -107,6 +107,20 @@ class TestMain(unittest.TestCase):
         self.assertEqual(check_setup.main(["--install"]), 0)
         mocked_installer.assert_called_once()
         self.assertEqual(mocked_checks.call_count, 2)
+        self.assertEqual(mocked_profile.call_count, 2)
+
+    @patch.object(check_setup, "run_installer", return_value=True)
+    @patch.object(check_setup, "check_profile", side_effect=[False, False])
+    @patch.object(
+        check_setup,
+        "check_dependencies",
+        side_effect=[[True, False], [True, True]],
+    )
+    def test_missing_profile_is_shown_again_after_install(
+        self, mocked_checks, mocked_profile, mocked_installer
+    ):
+        self.assertEqual(check_setup.main(["--install"]), 0)
+        self.assertEqual(mocked_profile.call_count, 2)
 
 
 if __name__ == "__main__":

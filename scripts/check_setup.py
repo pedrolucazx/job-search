@@ -160,6 +160,8 @@ def main(argv=None):
     print("\nRechecking your environment...\n")
     results = check_dependencies()
     print()
+    profile_ok = check_profile()
+    print()
     return print_summary(results, profile_ok)
 
 
