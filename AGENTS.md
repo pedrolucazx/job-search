@@ -20,17 +20,22 @@ any tool's proprietary format.
 
 ## Where to start
 
-1. **`rules/README.md`** — absolute rules and rule index (universal, no
+1. **`workflows/startup.md`** — run the environment check once at the
+   beginning of every agent session. If dependencies are missing, report
+   them and ask the candidate whether to install everything now; never
+   start installation without their confirmation.
+2. **`rules/README.md`** — absolute rules and rule index (universal, no
    candidate data).
-2. **`profile/candidate.yaml`** — the active candidate's data. If it doesn't
+3. **`profile/candidate.yaml`** — the active candidate's data. If it doesn't
    exist, copy `profile/candidate.example.yaml` and fill it in (never invent
    data). Validate with:
    ```bash
    python3 scripts/validate_profile.py
    ```
-3. **`rules/`** — CV rules, fit evaluation, ATS verification, interview
+4. **`rules/`** — CV rules, fit evaluation, ATS verification, interview
    prep. Generic for any track (web, mobile, IoT, data...).
-4. **`workflows/`** — operational steps:
+5. **`workflows/`** — operational steps:
+   - `workflows/startup.md` — session-start environment check + install offer
    - `workflows/daily.md` — search for jobs, rank by fit
    - `workflows/apply-batch.md` — generate CVs for the chosen jobs
    - `workflows/compile.md` — compile LaTeX → PDF, ATS check, archive
@@ -40,8 +45,8 @@ any tool's proprietary format.
    - `workflows/interview-prep.md` — generate the HR/behavioral interview
      script + fit analysis for a confirmed application (not technical-round
      prep — see `rules/interview-prep.md` for that)
-5. **`templates/cv_template.tex`** — base LaTeX template.
-6. **`scripts/`** — automation (`validate_profile.py`, `compile-all.sh`,
+6. **`templates/cv_template.tex`** — base LaTeX template.
+7. **`scripts/`** — automation (`validate_profile.py`, `compile-all.sh`,
    `track_append.py`).
 
 ## Repository conventions
