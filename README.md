@@ -39,13 +39,9 @@ If you've never used this kind of agent-driven repo before, follow these in
 order — nothing else to read first:
 
 - [ ] Clone this repo (or use "Use this template" on GitHub)
-- [ ] Open your coding agent (Claude Code, Codex, OpenCode...) in this
-      folder. At the start of its first job-search task, it checks the
-      environment and, if anything is missing, asks whether to install
-      everything now. Automatic installation currently supports
-      Debian/Ubuntu.
-- [ ] If your agent doesn't run the startup workflow, use
-      `python3 scripts/check_setup.py` manually.
+- [ ] Run `python3 scripts/check_setup.py` — it tells you exactly what's
+      missing (Bun, LaTeX, PyYAML...) and asks whether to install everything
+      now. Automatic installation currently supports Debian/Ubuntu.
 - [ ] `cp profile/candidate.example.yaml profile/candidate.yaml`
 - [ ] Open `profile/candidate.yaml` and replace every value with your own
       real data (name, email, skills, experience — see
@@ -54,7 +50,8 @@ order — nothing else to read first:
       the pipeline will refuse to run if you do.
 - [ ] Run `python3 scripts/validate_profile.py` — fix anything it flags
 - [ ] Install the search CLIs (step 2 in "Getting started" below)
-- [ ] Type `/daily`
+- [ ] Open your coding agent (Claude Code, Codex, OpenCode...) in this
+      folder and type `/daily`
 - [ ] When you get a compiled CV and a URL: **open the URL yourself and
       submit it by hand** — this tool never applies for you, see the
       warning above
@@ -90,21 +87,14 @@ for the full architecture.
 - LaTeX (`pdflatex`) + `pdftotext`/`pdfinfo` (poppler-utils) — to compile and ATS-check
 - `jq` — reads fields out of the metadata JSON during compilation
 
-The agent checks these once at the beginning of each session via
-[`workflows/startup.md`](workflows/startup.md). If anything is missing, it
-reports the dependencies and asks before installing them. To run the same
-check yourself, use `python3 scripts/check_setup.py`. Detailed manual install
-steps: [SETUP.md](SETUP.md).
+Run `python3 scripts/check_setup.py` to check all of these at once. If
+anything is missing, it reports the dependencies and asks before installing
+them. Detailed manual install steps: [SETUP.md](SETUP.md).
 
 ## Getting started
 
-0. Open your coding agent in the repository. It runs the environment check
-once per session and asks `Install all missing dependencies now?` when
-needed.
-
-For the manual path:
-
 ```bash
+# 0. Check your environment first
 python3 scripts/check_setup.py             # interactive check
 python3 scripts/check_setup.py --install   # install without the question
 python3 scripts/check_setup.py --no-prompt # diagnostics/CI only
@@ -155,7 +145,7 @@ Then, inside your coding agent:
 |---|---|
 | `profile/` | Your data (`candidate.yaml`, gitignored) — start from `candidate.example.yaml` |
 | `rules/` | Universal rules: CV, fit score, ATS, interview — no one's personal data |
-| `workflows/` | Session startup and operational steps for each command above |
+| `workflows/` | Operational steps for each command above |
 | `templates/` | Generic LaTeX template (placeholders resolved from the profile) |
 | `scripts/` | Environment setup, dependency installation, profile validation, batch compilation, CSV tracker |
 | `.agents/skills/` | Job search CLIs (LinkedIn, freehire) |
@@ -180,7 +170,6 @@ always passes validation.
 | Symptom | Where to look |
 |---|---|
 | Not sure what's wrong with your setup | Run `python3 scripts/check_setup.py` first — it checks everything at once and tells you exactly what's missing |
-| The agent didn't run the startup check | Ask it to read and execute `workflows/startup.md`, or run `python3 scripts/check_setup.py` manually |
 | `bash: bun: command not found` | Bun isn't installed — `curl -fsSL https://bun.sh/install \| bash`, then open a new terminal (or `source` your shell config) so it's on your PATH |
 | `pdflatex: command not found` | LaTeX isn't installed — see [SETUP.md](SETUP.md); on Debian/Ubuntu you need `texlive-latex-extra` specifically, not just `texlive-latex-base` (the template uses `titlesec`, which isn't in the base set) |
 | `ModuleNotFoundError: No module named 'yaml'` | PyYAML isn't installed — `pip install pyyaml` (or `pip3 install pyyaml` depending on your system) |
@@ -202,7 +191,6 @@ always passes validation.
 ## Other documents
 
 - [AGENTS.md](AGENTS.md) — full architecture, agent/LLM-agnostic
-- [workflows/startup.md](workflows/startup.md) — session-start environment check and install confirmation
 - [SETUP.md](SETUP.md) — installing dependencies
 - [OPENCODE.md](OPENCODE.md) — OpenCode's free models and which to use for each task
 - [documents/README.md](documents/README.md) — how the applications folder is organized (local, gitignored)

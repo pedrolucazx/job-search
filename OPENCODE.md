@@ -4,10 +4,6 @@ Guide for using OpenCode (free AI, via OpenCode Zen) as the pipeline's second ac
 Goal: Claude Code (paid) does the work that requires fine judgment; OpenCode (free)
 does the mechanical work. Saves Claude Code Pro tokens even with RTK.
 
-Before the first job-search task in a new session, read and execute
-`workflows/startup.md`. This keeps the environment check and installation
-confirmation consistent even when OpenCode's shell is non-interactive.
-
 ---
 
 ## 1. Full daily sequence

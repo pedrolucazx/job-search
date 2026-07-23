@@ -5,12 +5,6 @@ Claude Code (Opus) generates CVs with surgical precision; OpenCode handles compi
 
 Full architecture (agent/LLM-agnostic): see `AGENTS.md`.
 
-## Session Startup
-
-Before the first job-search task in each new session, read and execute
-`workflows/startup.md`. The setup question is asked in the conversation, not
-left to an interactive shell prompt.
-
 ## Absolute Rules
 1. NEVER invent data, metrics, projects, or technologies outside `profile/candidate.yaml`
 2. Education and Languages sections are LOCKED — copy exactly as they are
