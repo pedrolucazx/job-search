@@ -6,10 +6,12 @@ calls it) against a temp CSV file.
 Run with: python3 -m unittest discover -s tests
 """
 import csv
+import json
 import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "track_append.py"
@@ -99,6 +101,100 @@ class TestTrackAppend(unittest.TestCase):
             rows = list(csv.DictReader(f))
         self.assertEqual(len(rows), 2)
         self.assertEqual([r["empresa"] for r in rows], ["First", "Second"])
+
+
+RECORD = {
+    "empresa": "Nimbus Labs",
+    "cargo": "Desenvolvedor Backend Node.js Pleno",
+    "url": "https://example.test/jobs/1234",
+    "data": "2020-01-01",
+    "cv_tex": "documents/cv/main_nimbus_labs_backend_node_pleno.tex",
+    "score": 71,
+    "nivel": "Pleno",
+    "fonte": "LinkedIn",
+    "stack": ["Node.js", "TypeScript", "PostgreSQL"],
+    "gaps": [
+        {"skill": "Node.js", "status": "full", "nota": "5 anos"},
+        {"skill": "Kafka", "status": "partial", "nota": "eventos sem Kafka declarado"},
+        {"skill": "Kubernetes", "status": "absent", "nota": "não consta no perfil"},
+    ],
+}
+
+
+class TestTrackAppendFromFolder(unittest.TestCase):
+    def setUp(self):
+        self.tmpdir = tempfile.TemporaryDirectory()
+        self.csv_path = str(Path(self.tmpdir.name) / "applications.csv")
+
+    def tearDown(self):
+        self.tmpdir.cleanup()
+
+    def write_record(self, **overrides):
+        record = {**RECORD, **overrides}
+        for key, value in overrides.items():
+            if value is None:
+                del record[key]
+        folder = Path(self.tmpdir.name) / "application"
+        folder.mkdir(exist_ok=True)
+        (folder / "metadata.json").write_text(json.dumps(record), encoding="utf-8")
+        return str(folder)
+
+    def read_rows(self):
+        with open(self.csv_path, newline="", encoding="utf-8") as f:
+            return list(csv.DictReader(f))
+
+    def test_from_fills_every_column(self):
+        result = run("--path", self.csv_path, "--from", self.write_record())
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        rows = self.read_rows()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], {
+            "data": date.today().isoformat(),
+            "empresa": "Nimbus Labs",
+            "cargo": "Desenvolvedor Backend Node.js Pleno",
+            "url": "https://example.test/jobs/1234",
+            "status": "Applied",
+            "fonte": "LinkedIn",
+            "nivel": "Pleno",
+            "stack": "Node.js,TypeScript,PostgreSQL",
+            "gaps": "Kafka,Kubernetes",
+            "versao_cv": "documents/cv/main_nimbus_labs_backend_node_pleno.tex",
+            "feedback": "Kafka: eventos sem Kafka declarado; Kubernetes: não consta no perfil",
+        })
+
+    def test_explicit_flag_overrides_derived_feedback(self):
+        run(
+            "--path", self.csv_path, "--from", self.write_record(),
+            "--feedback", "recrutador pediu detalhe de Kafka",
+        )
+        rows = self.read_rows()
+        self.assertEqual(rows[0]["feedback"], "recrutador pediu detalhe de Kafka")
+        self.assertEqual(rows[0]["gaps"], "Kafka,Kubernetes")
+
+    def test_check_duplicate_with_from(self):
+        folder = self.write_record()
+        absent = run("--check-duplicate", "--path", self.csv_path, "--from", folder)
+        self.assertEqual(absent.returncode, 0, absent.stderr)
+
+        run("--path", self.csv_path, "--from", folder)
+        present = run("--check-duplicate", "--path", self.csv_path, "--from", folder)
+        self.assertEqual(present.returncode, 1, present.stdout)
+
+    def test_missing_keys_yield_empty_columns(self):
+        result = run("--path", self.csv_path, "--from", self.write_record(gaps=None, fonte=None))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rows = self.read_rows()
+        self.assertEqual(rows[0]["gaps"], "")
+        self.assertEqual(rows[0]["feedback"], "")
+        self.assertEqual(rows[0]["fonte"], "")
+        self.assertEqual(rows[0]["empresa"], "Nimbus Labs")
+
+    def test_without_from_and_without_required_trio_fails(self):
+        result = run("--path", self.csv_path, "--empresa", "Nimbus Labs")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("--from", result.stderr)
+        self.assertFalse(Path(self.csv_path).exists())
 
 
 if __name__ == "__main__":

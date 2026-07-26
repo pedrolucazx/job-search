@@ -22,21 +22,24 @@ BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 CV_DIR="$BASE_DIR/documents/cv"
 APPLICATIONS_DIR="$BASE_DIR/documents/applications"
 
-# Email/phone come from the active profile, never hardcoded here (see AGENTS.md)
+# Email/phone/name come from the active profile, never hardcoded here (see AGENTS.md)
 EMAIL="$(python3 "$BASE_DIR/scripts/validate_profile.py" --get personal.email)"
 PHONE="$(python3 "$BASE_DIR/scripts/validate_profile.py" --get personal.phone)"
+CANDIDATE="$(python3 "$BASE_DIR/scripts/validate_profile.py" --get personal.name)"
+# The archived PDF is what the recruiter receives, so it carries the candidate's
+# name, not the company's. The intermediate .tex/.pdf in documents/cv/ still use
+# the per-application slug — they all share one directory until archiving.
+CV_FILENAME="$(python3 "$BASE_DIR/scripts/application_id.py" --filename "$CANDIDATE")_CV.pdf"
 DAILY_DIR="$BASE_DIR/daily/$DATA_DIR"
 COMPILED=0
 ERRORS=0
 ARCHIVED=0
 NEEDS_REVIEW=0
 
+# One implementation of the company+role identity, shared with the agent and the
+# dashboard — see scripts/application_id.py
 slugify() {
-  python3 -c "
-import sys, re, unicodedata
-s = unicodedata.normalize('NFKD', sys.argv[1]).encode('ascii', 'ignore').decode('ascii')
-print(re.sub(r'[^a-zA-Z0-9]+', '_', s).strip('_').lower())
-" "$1"
+  python3 "$BASE_DIR/scripts/application_id.py" "$@"
 }
 
 echo "╔══════════════════════════════════════════╗"
@@ -122,31 +125,28 @@ for json_file in "$DAILY_DIR"/*.json; do
     if [ "$PAGES" = "1" ] && [ "$ATS_BLOCKED" = false ]; then
       empresa_nome=$(jq -r '.empresa' "$json_file")
       cargo=$(jq -r '.cargo' "$json_file")
-      url=$(jq -r '.url' "$json_file")
-      data=$(jq -r '.data' "$json_file")
-      slug="$(slugify "$empresa_nome")_$(slugify "$cargo")"
+      # The slug is decided once, by apply-batch.md via application_id.py, and
+      # travels in the record. Older records predate the field — recompute then.
+      slug=$(jq -r '.slug // empty' "$json_file")
+      [ -n "$slug" ] || slug="$(slugify "$empresa_nome" "$cargo")"
       archive_dir="$APPLICATIONS_DIR/$slug"
       mkdir -p "$archive_dir"
-      mv "$pdf_file" "$archive_dir/main_$(slugify "$empresa_nome").pdf"
+      mv "$pdf_file" "$archive_dir/$CV_FILENAME"
       mv "$tex_file" "$archive_dir/cv_draft.tex"
-      cp "$json_file" "$archive_dir/metadata.json"
-      cat > "$archive_dir/outcome.md" <<EOF
-# Outcome: $empresa_nome — $cargo
-
-**URL:** $url — submit the CV manually here
-**Status:** waiting for send confirmation (run workflows/confirm.md)
-**Compilation date:** $data
-**Resolution date:** —
-
-## Interview stages reached
-- [ ] Phone screen
-- [ ] Technical interview
-- [ ] System design
-- [ ] Final round
-- [ ] Offer received
-
-## Notes
-EOF
+      # cv_tex pointed at documents/cv/, which the mv above just emptied
+      jq --arg p "documents/applications/$slug/cv_draft.tex" --arg s "$slug" \
+        '.cv_tex = $p | .slug = $s' "$json_file" > "$archive_dir/metadata.json"
+      # outcome.md's format lives in scripts/outcome.py, which reads the
+      # metadata.json written just above — never inline the template here again.
+      # Never --force: an existing outcome.md may already carry confirm.md's
+      # manual "Status: Applied" edit. The existence test lives here so that a
+      # real failure below reads as a failure instead of as "already exists".
+      if [ -f "$archive_dir/outcome.md" ]; then
+        echo "  ⚠  outcome.md already exists — kept as-is"
+      else
+        python3 "$BASE_DIR/scripts/outcome.py" --write "$archive_dir" > /dev/null \
+          || echo "  ❌ outcome.md NOT written (see the error above)"
+      fi
       echo "  📦 Archived to documents/applications/$slug/"
       ARCHIVED=$((ARCHIVED + 1))
     else

@@ -13,14 +13,15 @@ does the mechanical work. Saves Claude Code Pro tokens even with RTK.
 ```
 /daily
 ```
-Scrape (LinkedIn + freehire) → dedup in Notion → gap score → ranked table.
-You pick the numbers.
+Scrape (LinkedIn + freehire) → dedup (local first, then the configured tracker)
+→ gap score → ranked table. You pick the numbers.
 
 ```
 /apply-batch 1,2,3,8
 ```
-Generates `documents/cv/main_<company>_<role>.tex` + `daily/<date>/<company>_<role>.json` for each chosen job
-(role in the name avoids overwriting when there's more than one job at the same company).
+Generates `documents/cv/main_<slug>.tex` + `daily/<date>/<slug>.json` for each chosen job,
+where `<slug>` comes from `scripts/application_id.py` (company + role, so two roles at the
+same company can't overwrite each other).
 Accepts an index from the table or a pasted URL directly (a job found outside `/daily`).
 
 Exit Claude Code (`exit` / Ctrl+D) once the `.tex` files are ready.
@@ -31,7 +32,10 @@ Exit Claude Code (`exit` / Ctrl+D) once the `.tex` files are ready.
 /compile-today
 ```
 Reads `daily/<date>/*.json` → `pdflatex` on each `.tex` (via `scripts/compile-all.sh`) →
-ATS check → registers in Notion via MCP → archives into `documents/applications/`.
+ATS check → archives into `documents/applications/`.
+
+**It never touches the tracker.** Registering an application is `/confirm`'s job
+alone, after you confirm the CV was actually sent — see `workflows/compile.md`.
 
 Implemented in `.opencode/commands/compile-today.md`, already with
 `north-mini-code-free` pinned in the frontmatter — no need to pick a model by hand.
@@ -82,13 +86,13 @@ OpenCode's custom commands live in `.opencode/commands/*.md`, just like
 
 ```markdown
 ---
-description: Compiles today's CVs, runs the ATS check, and registers in Notion
+description: Compiles today's CVs, runs the ATS check, and archives (doesn't touch the tracker)
 agent: build
 model: opencode/north-mini-code-free
 ---
 
 Read daily/<date>/*.json and for each one: compile the .tex with pdflatex,
-run pdftotext -layout for the ATS check, and register the application in Notion via MCP.
+run pdftotext -layout for the ATS check, and archive it.
 ```
 
 This way `/compile-today` always opens with `north-mini-code-free` without you

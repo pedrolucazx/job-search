@@ -26,9 +26,13 @@ running it and do not try to do any of the following by hand**:
    and phone from the profile, stack/gap keyword coverage.
 4. **Archives** every job that compiled to exactly 1 page and has no
    blocking ATS issue: moves the PDF and `.tex` into
-   `documents/applications/<company>_<role>/` (as `main_<company>.pdf` and
-   `cv_draft.tex`), copies the day's JSON there as `metadata.json`, and
-   writes `outcome.md` with status "waiting for send confirmation".
+   `documents/applications/<slug>/`, naming the PDF after the candidate
+   (`<Name>_CV.pdf`, read from `profile/candidate.yaml → personal.name` —
+   it's the file a recruiter receives) and the source `cv_draft.tex`. It then
+   writes the day's JSON there as `metadata.json` with `cv_tex` repointed at
+   the archived copy, and `outcome.md` with status "waiting for send
+   confirmation". The `<slug>` is the one `apply-batch.md` put in the record;
+   older records without the field get it recomputed from company + role.
 
 Archiving used to be a manual step described here for whichever agent ran
 this workflow — it's folded into the script now because a weaker model

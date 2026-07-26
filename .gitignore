@@ -17,6 +17,7 @@
 documents/*
 !documents/README.md
 daily/
+dashboard.html
 
 # Dado real do candidato — só o .example.yaml é commitado
 profile/candidate.yaml

@@ -46,10 +46,10 @@ the given company (case-insensitive, e.g. `dexian` matches
 
 ## 2. Read the sources of truth
 
-- `documents/applications/<company>_<role>/cv_draft.tex` — the source of
+- `<folder>/cv_draft.tex` — the source of
   truth for what was actually highlighted to this specific employer (not
   the raw profile — the CV may have been trimmed to fit 1 page).
-- `documents/applications/<company>_<role>/metadata.json` — `score`,
+- `<folder>/metadata.json` — `score`,
   `gaps[]`, `stack[]`, `nivel`, `requisitos_full/partial/absent`, `url`.
 - `profile/candidate.yaml` — `personal`, `education`, `languages`,
   `soft_skills`, `professional_experience` (including `duration_note` /
@@ -81,11 +81,11 @@ experience, motivation sentence, most-relevant-project selection reusing
 
 ## 5. Save the output
 
-Write to `documents/applications/<company>_<role>/roteiro.md`.
+Write to `<folder>/roteiro.md`.
 
 ## 6. Update the local outcome record
 
-Append one line to `documents/applications/<company>_<role>/outcome.md`'s
+Append one line to `<folder>/outcome.md`'s
 `## Notes` section (create the `## Notes` heading if the file somehow lacks
 one), e.g.:
 

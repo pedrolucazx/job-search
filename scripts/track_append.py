@@ -13,14 +13,26 @@ profile/candidate.schema.yaml for what each one means.
 Usage:
   python3 scripts/track_append.py \
     --path documents/applications.csv \
+    --from documents/applications/company_x_backend_pleno
+
+  python3 scripts/track_append.py --check-duplicate \
+    --path documents/applications.csv \
+    --from documents/applications/company_x_backend_pleno
+
+  python3 scripts/track_append.py \
+    --path documents/applications.csv \
     --empresa "Company X" --cargo "Mid-level Backend" --url "https://..." \
     --status "Applied" --data "2026-07-27" --fonte "LinkedIn" \
     --nivel "Mid-level" --stack "Node.js,TypeScript" --gaps "AWS,Kafka" \
     --versao-cv "main_company_x.tex" --feedback "gap notes"
+
+Any explicit flag overrides the value derived from --from.
 """
 import argparse
 import csv
+import json
 import sys
+from datetime import date
 from pathlib import Path
 
 FIELDS = [
@@ -29,23 +41,57 @@ FIELDS = [
 ]
 
 
+def derive(folder):
+    metadata = Path(folder) / "metadata.json"
+    try:
+        record = json.loads(metadata.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"cannot read {metadata}: {exc}", file=sys.stderr)
+        sys.exit(1)
+    open_gaps = [g for g in (record.get("gaps") or []) if g.get("status") != "full"]
+    return {
+        "data": date.today().isoformat(),
+        "empresa": record.get("empresa") or "",
+        "cargo": record.get("cargo") or "",
+        "url": record.get("url") or "",
+        "status": "Applied",
+        "fonte": record.get("fonte") or "",
+        "nivel": record.get("nivel") or "",
+        "stack": ",".join(record.get("stack") or []),
+        "gaps": ",".join(g.get("skill", "") for g in open_gaps),
+        "versao_cv": record.get("cv_tex") or "",
+        "feedback": "; ".join(f'{g.get("skill", "")}: {g.get("nota", "")}' for g in open_gaps),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", required=True)
-    parser.add_argument("--empresa", required=True)
-    parser.add_argument("--cargo", required=True)
-    parser.add_argument("--url", default="")
-    parser.add_argument("--status", default="Applied")
-    parser.add_argument("--data", required=True)
-    parser.add_argument("--fonte", default="")
-    parser.add_argument("--nivel", default="")
-    parser.add_argument("--stack", default="")
-    parser.add_argument("--gaps", default="")
-    parser.add_argument("--versao-cv", dest="versao_cv", default="")
-    parser.add_argument("--feedback", default="")
+    parser.add_argument("--from", dest="from_folder",
+                        help="folder holding a metadata.json to derive every column from")
+    parser.add_argument("--empresa")
+    parser.add_argument("--cargo")
+    parser.add_argument("--url")
+    parser.add_argument("--status")
+    parser.add_argument("--data")
+    parser.add_argument("--fonte")
+    parser.add_argument("--nivel")
+    parser.add_argument("--stack")
+    parser.add_argument("--gaps")
+    parser.add_argument("--versao-cv", dest="versao_cv")
+    parser.add_argument("--feedback")
     parser.add_argument("--check-duplicate", action="store_true",
                          help="only check whether company+cargo already exists (no write), exit code 1 if it does")
     args = parser.parse_args()
+
+    if not args.from_folder and any(getattr(args, f) is None for f in ("empresa", "cargo", "data")):
+        parser.error("pass --from FOLDER, or --empresa, --cargo and --data")
+
+    derived = derive(args.from_folder) if args.from_folder else {"status": "Applied"}
+    row = {
+        f: getattr(args, f) if getattr(args, f) is not None else derived.get(f, "")
+        for f in FIELDS
+    }
 
     path = Path(args.path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -58,11 +104,11 @@ def main():
         # duplicate (see workflows/daily.md's dedup step for why matching by
         # company alone would silently hide a genuinely different job).
         with open(path, encoding="utf-8", newline="") as f:
-            for row in csv.DictReader(f):
-                same_empresa = row.get("empresa", "").strip().lower() == args.empresa.strip().lower()
-                same_cargo = row.get("cargo", "").strip().lower() == args.cargo.strip().lower()
+            for existing in csv.DictReader(f):
+                same_empresa = existing.get("empresa", "").strip().lower() == row["empresa"].strip().lower()
+                same_cargo = existing.get("cargo", "").strip().lower() == row["cargo"].strip().lower()
                 if same_empresa and same_cargo:
-                    print(f"already exists: {row}")
+                    print(f"already exists: {existing}")
                     sys.exit(1)
         sys.exit(0)
 
@@ -71,20 +117,8 @@ def main():
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         if is_new:
             writer.writeheader()
-        writer.writerow({
-            "data": args.data,
-            "empresa": args.empresa,
-            "cargo": args.cargo,
-            "url": args.url,
-            "status": args.status,
-            "fonte": args.fonte,
-            "nivel": args.nivel,
-            "stack": args.stack,
-            "gaps": args.gaps,
-            "versao_cv": args.versao_cv,
-            "feedback": args.feedback,
-        })
-    print(f"✅ registered in {path}: {args.empresa} — {args.cargo} ({args.status})")
+        writer.writerow(row)
+    print(f"✅ registered in {path}: {row['empresa']} — {row['cargo']} ({row['status']})")
 
 
 if __name__ == "__main__":

@@ -37,11 +37,18 @@ Use `rules/job-evaluation.md`, with the full description in hand:
 Read `rules/cv-rules.md` + `profile/candidate.yaml` +
 `templates/cv_template.tex`.
 
-Produce `documents/cv/main_<sanitized_company>_<sanitized_role>.tex` (role
-slug included even here — two different roles at the same company in the
-same batch would otherwise silently overwrite each other's `.tex` before
-`compile.md` ever archives them; this mirrors the `<company>_<role>`
-convention `documents/applications/` already uses downstream) with:
+Get the application's slug first — never invent this name yourself. The
+compile step, the local dedup in `workflows/daily.md` and the local check in
+`workflows/confirm.md` all resolve the same application from company + role,
+and they only find each other if the name comes from one place:
+
+```bash
+python3 scripts/application_id.py "<company>" "<role>"
+```
+
+Produce `documents/cv/main_<slug>.tex` (the slug carries the role, so two
+different roles at the same company in the same batch can't silently
+overwrite each other's `.tex` before `compile.md` ever archives them) with:
 - [ ] Summary personalized for the job
 - [ ] Skills ordered by overlap with the job's stack
 - [ ] 4-6 experience bullets, most relevant first
@@ -53,17 +60,18 @@ convention `documents/applications/` already uses downstream) with:
 
 ### 4. Save metadata
 
-Create `daily/<date>/<sanitized_company>_<sanitized_role>.json` (same
-collision reasoning as the `.tex` above) — canonical schema, field names
-can't change (`workflows/compile.md` depends on them):
+Create `daily/<date>/<slug>.json`, reusing the exact slug from step 3 —
+canonical schema, field names can't change (`workflows/compile.md` depends on
+them):
 
 ```json
 {
   "empresa": "Company Name",
   "cargo": "Job title",
+  "slug": "company_name_job_title",
   "url": "https://...",
   "data": "YYYY-MM-DD",
-  "cv_tex": "documents/cv/main_company_job-title.tex",
+  "cv_tex": "documents/cv/main_company_name_job_title.tex",
   "score": 82,
   "gaps": [
     {"skill": "AWS", "status": "absent", "nota": "Identified gap"},
