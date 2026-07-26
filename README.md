@@ -148,7 +148,7 @@ Then, inside your coding agent:
 | `rules/` | Universal rules: CV, fit score, ATS, interview — no one's personal data |
 | `workflows/` | Operational steps for each command above |
 | `templates/` | Generic LaTeX template (placeholders resolved from the profile) |
-| `scripts/` | Environment setup, dependency installation, profile validation, batch compilation, CSV tracker |
+| `scripts/` | Environment setup, dependency installation, profile validation, batch compilation, CSV tracker, application identity and outcome format |
 | `.agents/skills/` | Job search CLIs (LinkedIn, freehire) |
 
 Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
@@ -160,9 +160,10 @@ python3 -m unittest discover -s tests
 ```
 
 Covers `scripts/validate_profile.py`, `scripts/track_append.py`,
-`scripts/check_setup.py`, and `scripts/check_roteiro.py` (stdlib `unittest`,
-zero extra dependency), plus a guard that `profile/candidate.example.yaml`
-always passes validation.
+`scripts/check_setup.py`, `scripts/check_roteiro.py`,
+`scripts/application_id.py` and `scripts/outcome.py` (stdlib `unittest`, zero
+extra dependency), plus a guard that `profile/candidate.example.yaml` always
+passes validation.
 
 ## Troubleshooting
 

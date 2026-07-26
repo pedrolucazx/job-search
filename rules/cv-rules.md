@@ -95,6 +95,10 @@ Never round experience time beyond 1 year (e.g. if `duration_note` says
   placeholders.
 - Section titles in UPPERCASE, no two columns/tables/icons/images (Absolute
   Rule #6).
+- If you redefine `\section` in a compact preamble instead of using the
+  template, the definition MUST start with `\par` (e.g.
+  `\renewcommand{\section}[1]{\par\vspace{4pt}...}`). Without it the heading
+  glues onto the previous paragraph and every section runs inline.
 
 ## Mandatory Checklist Before Delivering
 

@@ -42,7 +42,10 @@ any tool's proprietary format.
      prep — see `rules/interview-prep.md` for that)
 5. **`templates/cv_template.tex`** — base LaTeX template.
 6. **`scripts/`** — automation (`validate_profile.py`, `compile-all.sh`,
-   `track_append.py`).
+   `track_append.py`). Two of them own a format so nothing else has to
+   reimplement it: `application_id.py` turns company + role into an
+   application's folder name, and `outcome.py` renders and parses
+   `outcome.md`.
 
 ## Repository conventions
 

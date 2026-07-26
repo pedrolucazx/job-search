@@ -1,7 +1,7 @@
 # 🎯 Job Search — Job-Hunt Workspace
 
 This repository is your job-hunt command center.
-Claude Code (Opus) generates CVs with surgical precision; OpenCode handles compilation, ATS checks, and tracker registration.
+Claude Code (Opus) generates CVs with surgical precision; OpenCode handles compilation, ATS checks, and archiving. Only `/confirm` writes to the tracker.
 
 Full architecture (agent/LLM-agnostic): see `AGENTS.md`.
 
@@ -31,7 +31,9 @@ Full architecture (agent/LLM-agnostic): see `AGENTS.md`.
 
 ## Output Format (Claude Code → OpenCode bridge)
 Claude Code generates:
-- `documents/cv/main_<company>_<role>.tex` — CV in LaTeX (role in the name avoids overwriting when there's more than one job at the same company)
-- `daily/<date>/<company>_<role>.json` — Application metadata
+- `documents/cv/main_<slug>.tex` — CV in LaTeX
+- `daily/<date>/<slug>.json` — Application metadata, carrying `slug` as a field
+
+`<slug>` comes from `python3 scripts/application_id.py "<company>" "<role>"` — never invented by the agent, so every step resolves the same application to the same folder.
 
 OpenCode reads and processes it.
