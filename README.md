@@ -27,7 +27,8 @@ or even a plain chat without tool-use for the manual path).
 > This repo is a working instance for one person's job search. Everything
 > that drives the pipeline — the generic engine (`AGENTS.md`, `rules/`,
 > `workflows/`, `profile/`) and the day-to-day command files (`CLAUDE.md`,
-> `.claude/commands/`, `.opencode/commands/`) — is in English, so any dev can
+> `.claude/commands/`, `.opencode/commands/`,
+> `.agents/skills/career-command-center/`) — is in English, so any dev can
 > reuse it as-is. The one exception is generated output meant to be read or
 > spoken by a human in a specific interview (e.g.
 > `documents/applications/*/roteiro.md`), which stays in whatever language
@@ -51,8 +52,9 @@ order — nothing else to read first:
       the pipeline will refuse to run if you do.
 - [ ] Run `python3 scripts/validate_profile.py` — fix anything it flags
 - [ ] Install the search CLIs (step 2 in "Getting started" below)
-- [ ] Open your coding agent (Claude Code, Codex, OpenCode...) in this
-      folder and type `/daily`
+- [ ] Open your coding agent in this folder and run the daily workflow
+      (`/daily` where slash commands exist, or `$career-command-center daily`
+      in Codex)
 - [ ] When you get a compiled CV and a URL: **open the URL yourself and
       submit it by hand** — this tool never applies for you, see the
       warning above
@@ -130,6 +132,9 @@ Then, inside your coding agent:
 /confirm 1,2,3      → register the sent application in the tracker
 ```
 
+Codex uses repo skills instead of these command folders; invoke the same
+workflow as `$career-command-center daily` or ask it to run daily.
+
 ## Commands
 
 | Command | What it does |
@@ -176,7 +181,7 @@ always passes validation.
 | `pdflatex: command not found` | LaTeX isn't installed — see [SETUP.md](SETUP.md); on Debian/Ubuntu you need `texlive-latex-extra` specifically, not just `texlive-latex-base` (the template uses `titlesec`, which isn't in the base set) |
 | `ModuleNotFoundError: No module named 'yaml'` | PyYAML isn't installed — `pip install pyyaml` (or `pip3 install pyyaml` depending on your system) |
 | `jq: command not found` | `sudo apt install jq` (or `brew install jq` on macOS) — used to read fields out of the metadata JSON during compilation |
-| Your coding agent doesn't recognize `/daily` as a command | Not every agent has slash-command support. Just say it in plain language instead: "read AGENTS.md, then workflows/daily.md, and run the steps using profile/candidate.yaml" |
+| Your coding agent doesn't recognize `/daily` as a command | Not every agent reads `.claude/commands` or `.opencode/commands`. In Codex, use `$career-command-center daily` or say: "read AGENTS.md, then workflows/daily.md, and run the steps using profile/candidate.yaml" |
 | Not sure what to put in `tracker.backend` | Use `csv` unless you specifically already use Notion and know your database ID — `csv` needs nothing installed and works out of the box |
 
 ### Day-to-day usage

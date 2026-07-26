@@ -72,6 +72,9 @@ python3 scripts/validate_profile.py
 
 ## Daily Usage
 1. Claude Code: `claude` → `/daily`
-2. Pick jobs → `/apply-batch 1,2,3,8`
+   Codex: `$career-command-center daily`
+2. Pick jobs → `/apply-batch 1,2,3,8` or `$career-command-center apply-batch 1,2,3,8`
 3. OpenCode: `/compile-today`
-4. Claude Code: `/confirm 1,2,3` (registers in the tracker configured in `profile/candidate.yaml`)
+   Codex: `$career-command-center compile-today`
+4. Claude Code: `/confirm 1,2,3` or `$career-command-center confirm 1,2,3`
+   (registers in the tracker configured in `profile/candidate.yaml`)

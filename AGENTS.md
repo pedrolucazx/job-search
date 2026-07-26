@@ -50,9 +50,10 @@ any tool's proprietary format.
   rules/behavior.
 - `rules/` and `workflows/` only contain universal rules, never a person's
   data.
-- `.claude/commands/`, `.claude/skills/`, `.opencode/commands/` are thin
-  adapters — each one only points to the real content in `workflows/` +
-  `rules/` + `profile/`, adapted to each agent's discovery convention.
+- `.claude/commands/`, `.claude/skills/`, `.opencode/commands/`, and
+  `.agents/skills/career-command-center/` are thin adapters — each one only
+  points to the real content in `workflows/` + `rules/` + `profile/`, adapted
+  to each agent's discovery convention.
 - Minimum requirement for full automation: an agent with file + shell
   access (Python 3, Bun, pdflatex, poppler-utils). See `SETUP.md`.
 
@@ -60,3 +61,4 @@ any tool's proprietary format.
 
 No problem. Just ask directly: "read `AGENTS.md`, then
 `workflows/daily.md`, and execute the steps using `profile/candidate.yaml`."
+In Codex, the repo-scoped shortcut is `$career-command-center daily`.
