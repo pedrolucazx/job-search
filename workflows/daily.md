@@ -56,13 +56,21 @@ this varies by market/country, adjust per profile), mark the job as
 
 ## 2. Check for duplicates
 
-Always check locally first, **regardless of `tracker.backend`**:
-`documents/applications/<company>_<role>/` (any job ever confirmed via
-`workflows/confirm.md`, with or without a CV — see that file for why this
-exists even for `tracker.backend: none`) and `daily/*/*.json` from the last
-few days (catches an application in progress this week that hasn't been
-confirmed yet). This local check alone is enough to never resurface a
-confirmed job, even with no external tracker configured.
+Always check locally first, **regardless of `tracker.backend`**. Resolve the
+application's folder with the identity module rather than building the path by
+hand — it exits 0 and prints the folder if the job was ever archived, exits 1
+if it wasn't, and still finds folders whose name predates the module:
+
+```bash
+python3 scripts/application_id.py --find "<company>" "<role>"
+```
+
+That covers any job ever confirmed via `workflows/confirm.md`, with or without
+a CV (see that file for why this exists even for `tracker.backend: none`).
+Also check `daily/*/*.json` from the last few days (catches an application in
+progress this week that hasn't been confirmed yet). This local check alone is
+enough to never resurface a confirmed job, even with no external tracker
+configured.
 
 Additionally, if an external tracker is configured, check it too (catches
 applications confirmed on another machine, or history from before this

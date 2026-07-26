@@ -41,11 +41,17 @@ misconfigured Notion MCP or a moved CSV file breaks the external backend.
 
 ### If the job had `CV? = Yes` (went through `apply-batch.md`)
 
-1. Check locally whether `documents/applications/<company>_<role>/metadata.json`
-   exists — this proves `compile.md` already ran and archived it.
-2. If it doesn't exist: warn, register nothing — ask to run
+1. Resolve the folder — don't build the path by hand, or a job that was
+   archived under a slightly different name will look like it was never
+   compiled:
+
+   ```bash
+   python3 scripts/application_id.py --find "<company>" "<role>"
+   ```
+
+2. Exit code 1 (nothing printed): warn, register nothing — ask to run
    `workflows/compile.md` first.
-3. If it exists: update `<folder>/outcome.md` — set **Status: Applied** and
+3. Folder printed: update `<folder>/outcome.md` — set **Status: Applied** and
    **Resolution date: today** (it currently says "waiting for send
    confirmation", from `compile.md`).
 
@@ -53,8 +59,10 @@ misconfigured Notion MCP or a moved CSV file breaks the external backend.
 
 1. Use the data already collected in this session's `/daily` (no CV, no
    local file yet — `compile.md` never touched this job).
-2. Create `documents/applications/<company>_<role>/outcome.md` from
-   scratch:
+2. Get the canonical slug
+   (`python3 scripts/application_id.py "<company>" "<role>"`) and create
+   `documents/applications/<slug>/outcome.md` from scratch — same name the
+   compile step would have used, so a later `/daily` finds it:
 
    ```markdown
    # Outcome: <Company> — <Role>
@@ -78,21 +86,30 @@ misconfigured Notion MCP or a moved CSV file breaks the external backend.
 
 ### `tracker.backend: csv` (default, zero dependency)
 
+Company, role, url, source, level, stack, gaps and the CV version all come
+from the folder's `metadata.json` via `--from`; the script fills `data` with
+today and `status` with `Applied`. Don't retype any of them by hand, or the
+tracker row will drift from the record the dashboard reads.
+
+**Exactly two commands, and the second one runs at most once** — it appends a
+row, so running it twice gives you two identical rows.
+
 ```bash
 CSV_PATH="$(python3 scripts/validate_profile.py --get tracker.csv.path)"
-python3 scripts/track_append.py --check-duplicate --path "$CSV_PATH" --empresa "<company>" --cargo "<role>" --data ""
-# --cargo must be the real role, not empty — check-duplicate matches on
-# company AND role, so an empty --cargo would never match anything and
-# silently disable the check. If it exited with code 0 (doesn't exist), register for real:
-python3 scripts/track_append.py \
-  --path "$CSV_PATH" \
-  --empresa "<company>" --cargo "<role>" --url "<url>" \
-  --status "Applied" --data "$(date +%Y-%m-%d)" --fonte "<source>" \
-  --nivel "<level>" --stack "<comma-separated stack>" \
-  --gaps "<skills with status != full, comma-separated>" \
-  --versao-cv "<name of the .tex used, empty if no CV>" \
-  --feedback "<gap notes>"
+FOLDER="documents/applications/<slug>"   # the folder Step 1 resolved
+python3 scripts/track_append.py --check-duplicate --path "$CSV_PATH" --from "$FOLDER"
+# check-duplicate matches on company AND role, never company alone: two
+# different roles at the same employer are two different applications. --from
+# takes both from metadata.json, so the check can't be silently disabled by a
+# missing --cargo. If it exited with code 0 (doesn't exist), register for real.
+# Add --feedback "<note>" to this same command only for something
+# metadata.json can't know — never as a second invocation.
+python3 scripts/track_append.py --path "$CSV_PATH" --from "$FOLDER"
 ```
+
+For a `CV? = No` job there is no `metadata.json`, so `--from` has nothing to
+read: pass `--empresa`, `--cargo` and `--data` explicitly (plus whatever else
+this session's `/daily` collected).
 
 ### `tracker.backend: notion` (personal config — the profile owner's own MCP)
 
