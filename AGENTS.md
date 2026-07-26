@@ -45,7 +45,8 @@ any tool's proprietary format.
    `track_append.py`). Two of them own a format so nothing else has to
    reimplement it: `application_id.py` turns company + role into an
    application's folder name, and `outcome.py` renders and parses
-   `outcome.md`.
+   `outcome.md`. `build_dashboard.py` reads both plus the daily records and
+   writes a static `dashboard.html`.
 
 ## Repository conventions
 

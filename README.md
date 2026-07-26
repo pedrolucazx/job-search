@@ -130,6 +130,16 @@ Then, inside your coding agent:
 /confirm 1,2,3      → register the sent application in the tracker
 ```
 
+To see where everything stands:
+
+```bash
+python3 scripts/build_dashboard.py   # writes dashboard.html at the repo root
+```
+
+A self-contained board (stdlib only, no server, no CDN) with one lane per stage,
+from ranked to discarded. Each card carries the fit score and stack, and opens
+the full gap table. It's gitignored — regenerate it whenever you want it fresh.
+
 ## Commands
 
 | Command | What it does |
