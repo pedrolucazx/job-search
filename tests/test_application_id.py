@@ -19,18 +19,18 @@ spec.loader.exec_module(application_id)
 class TestSlug(unittest.TestCase):
     def test_company_and_role(self):
         self.assertEqual(
-            application_id.slug("Sezzle", "AI Engineer II (Remote)"),
-            "sezzle_ai_engineer_ii_remote",
+            application_id.slug("Acme Health", "AI Engineer II (Remote)"),
+            "acme_health_ai_engineer_ii_remote",
         )
 
-    def test_matches_folders_already_on_disk(self):
+    def test_matches_the_shell_slugify_it_replaced(self):
         cases = [
-            (("Akvelon", "Senior Full-Stack Engineer with Node.js 8417 B"),
-             "akvelon_senior_full_stack_engineer_with_node_js_8417_b"),
-            (("CI&T", "Senior Fullstack Developer (NodeJS/React) - Brazil"),
-             "ci_t_senior_fullstack_developer_nodejs_react_brazil"),
-            (("WithClutch", "Senior Software Engineer"),
-             "withclutch_senior_software_engineer"),
+            (("Acme & Co", "Senior Full-Stack Engineer with Node.js 1234 B"),
+             "acme_co_senior_full_stack_engineer_with_node_js_1234_b"),
+            (("Globex", "Senior Fullstack Developer (NodeJS/React) - Brazil"),
+             "globex_senior_fullstack_developer_nodejs_react_brazil"),
+            (("Initech", "Senior Software Engineer"),
+             "initech_senior_software_engineer"),
         ]
         for parts, expected in cases:
             with self.subTest(parts=parts):
@@ -43,11 +43,11 @@ class TestSlug(unittest.TestCase):
         )
 
     def test_single_part(self):
-        self.assertEqual(application_id.slug("Growdev"), "growdev")
+        self.assertEqual(application_id.slug("Initech"), "initech")
 
     def test_empty_role_leaves_no_trailing_separator(self):
-        self.assertEqual(application_id.slug("Growdev", ""), "growdev")
-        self.assertEqual(application_id.slug("Growdev", "   "), "growdev")
+        self.assertEqual(application_id.slug("Initech", ""), "initech")
+        self.assertEqual(application_id.slug("Initech", "   "), "initech")
 
     def test_collapses_runs_of_punctuation(self):
         self.assertEqual(
@@ -92,48 +92,48 @@ class TestFind(unittest.TestCase):
         return folder
 
     def test_exact_slug_match(self):
-        expected = self._folder("sezzle_ai_engineer_ii_remote")
-        found = application_id.find("Sezzle", "AI Engineer II (Remote)", self.base)
+        expected = self._folder("acme_health_ai_engineer_ii_remote")
+        found = application_id.find("Acme Health", "AI Engineer II (Remote)", self.base)
         self.assertEqual(found, expected)
 
     def test_falls_back_to_metadata_when_folder_name_diverges(self):
         expected = self._folder(
-            "sezzle_ai_engineer_ii", empresa="Sezzle", cargo="AI Engineer II (Remote)"
+            "acme_health_ai_engineer_ii", empresa="Acme Health", cargo="AI Engineer II (Remote)"
         )
-        found = application_id.find("Sezzle", "AI Engineer II (Remote)", self.base)
+        found = application_id.find("Acme Health", "AI Engineer II (Remote)", self.base)
         self.assertEqual(found, expected)
 
     def test_metadata_match_ignores_case_and_padding(self):
-        expected = self._folder("whatever", empresa="Sezzle", cargo="AI Engineer II (Remote)")
-        found = application_id.find("  sezzle ", "ai engineer ii (remote)", self.base)
+        expected = self._folder("whatever", empresa="Acme Health", cargo="AI Engineer II (Remote)")
+        found = application_id.find("  acme health ", "ai engineer ii (remote)", self.base)
         self.assertEqual(found, expected)
 
     def test_returns_none_when_nothing_matches(self):
         self._folder("other_company_other_role", empresa="Other", cargo="Other Role")
-        self.assertIsNone(application_id.find("Sezzle", "AI Engineer II", self.base))
+        self.assertIsNone(application_id.find("Acme Health", "AI Engineer II", self.base))
 
     def test_does_not_match_company_alone(self):
-        self._folder("sezzle_data_engineer", empresa="Sezzle", cargo="Data Engineer")
-        self.assertIsNone(application_id.find("Sezzle", "AI Engineer II", self.base))
+        self._folder("acme_health_data_engineer", empresa="Acme Health", cargo="Data Engineer")
+        self.assertIsNone(application_id.find("Acme Health", "AI Engineer II", self.base))
 
     def test_survives_broken_metadata(self):
         broken = self.base / "broken"
         broken.mkdir()
         (broken / "metadata.json").write_text("{not json", encoding="utf-8")
-        expected = self._folder("good", empresa="Sezzle", cargo="AI Engineer II")
-        self.assertEqual(application_id.find("Sezzle", "AI Engineer II", self.base), expected)
+        expected = self._folder("good", empresa="Acme Health", cargo="AI Engineer II")
+        self.assertEqual(application_id.find("Acme Health", "AI Engineer II", self.base), expected)
 
 
 class TestCLI(unittest.TestCase):
     def test_slug_mode(self):
-        self.assertEqual(application_id.main(["Sezzle", "AI Engineer II (Remote)"]), 0)
+        self.assertEqual(application_id.main(["Acme Health", "AI Engineer II (Remote)"]), 0)
 
     def test_filename_mode(self):
         self.assertEqual(application_id.main(["--filename", "Ana Souza"]), 0)
 
     def test_find_requires_two_arguments(self):
         with self.assertRaises(SystemExit):
-            application_id.main(["--find", "Sezzle"])
+            application_id.main(["--find", "Acme Health"])
 
     def test_find_missing_folder_exits_nonzero(self):
         self.assertEqual(application_id.main(["--find", "Nope Ltd", "Nope Role"]), 1)

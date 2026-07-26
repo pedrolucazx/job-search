@@ -8,12 +8,12 @@ filesystem name, so the agent, compile-all.sh and the dashboard can't disagree
 about what a given application is called.
 
 Usage:
-  python3 scripts/application_id.py "Sezzle" "AI Engineer II (Remote)"
-      sezzle_ai_engineer_ii_remote
-  python3 scripts/application_id.py "Sezzle"
-      sezzle
-  python3 scripts/application_id.py --find "Sezzle" "AI Engineer II (Remote)"
-      documents/applications/sezzle_ai_engineer_ii_remote
+  python3 scripts/application_id.py "Acme Health" "AI Engineer II (Remote)"
+      acme_health_ai_engineer_ii_remote
+  python3 scripts/application_id.py "Acme Health"
+      acme_health
+  python3 scripts/application_id.py --find "Acme Health" "AI Engineer II (Remote)"
+      documents/applications/acme_health_ai_engineer_ii_remote
       (prints nothing and exits 1 if no folder matches)
   python3 scripts/application_id.py --filename "Ana Souza"
       Ana_Souza
