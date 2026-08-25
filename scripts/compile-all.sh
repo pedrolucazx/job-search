@@ -133,9 +133,15 @@ for json_file in "$DAILY_DIR"/*.json; do
       mkdir -p "$archive_dir"
       mv "$pdf_file" "$archive_dir/$CV_FILENAME"
       mv "$tex_file" "$archive_dir/cv_draft.tex"
+      email_template=$(jq -r '.email_template // empty' "$json_file")
+      archived_email_template=""
+      if [ -n "$email_template" ] && [ -f "$BASE_DIR/$email_template" ]; then
+        mv "$BASE_DIR/$email_template" "$archive_dir/email_template.txt"
+        archived_email_template="documents/applications/$slug/email_template.txt"
+      fi
       # cv_tex pointed at documents/cv/, which the mv above just emptied
-      jq --arg p "documents/applications/$slug/cv_draft.tex" --arg s "$slug" \
-        '.cv_tex = $p | .slug = $s' "$json_file" > "$archive_dir/metadata.json"
+      jq --arg p "documents/applications/$slug/cv_draft.tex" --arg s "$slug" --arg e "$archived_email_template" \
+        '.cv_tex = $p | .slug = $s | if $e != "" then .email_template = $e else . end' "$json_file" > "$archive_dir/metadata.json"
       # outcome.md's format lives in scripts/outcome.py, which reads the
       # metadata.json written just above — never inline the template here again.
       # Never --force: an existing outcome.md may already carry confirm.md's

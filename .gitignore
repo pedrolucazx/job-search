@@ -16,7 +16,7 @@
 # it's just structure documentation, not personal data
 documents/*
 !documents/README.md
-daily/
+/daily/
 dashboard.html
 
 # Dado real do candidato — só o .example.yaml é commitado
