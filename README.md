@@ -53,8 +53,7 @@ order — nothing else to read first:
 - [ ] Run `python3 scripts/validate_profile.py` — fix anything it flags
 - [ ] Install the search CLIs (step 2 in "Getting started" below)
 - [ ] Open your coding agent in this folder and run the daily workflow
-      (`/daily` where slash commands exist, or `$career-command-center daily`
-      in Codex)
+      (`/daily` where slash commands exist, or `$daily` in Codex)
 - [ ] When you get a compiled CV and a URL: **open the URL yourself and
       submit it by hand** — this tool never applies for you, see the
       warning above
@@ -132,8 +131,11 @@ Then, inside your coding agent:
 /confirm 1,2,3      → register the sent application in the tracker
 ```
 
-Codex uses repo skills instead of these command folders; invoke the same
-workflow as `$career-command-center daily` or ask it to run daily.
+Codex uses repo skills instead of these command folders. Invoke the same
+workflows as `$daily`, `$apply-batch 1,2,3`, `$compile-today`, `$confirm 1,2,3`,
+or `$interview-prep <company>`. You can also use the generic
+`$career-command-center daily`. Do not type a space after `$`; `$ daily` is
+plain text, not a skill mention.
 
 To see where everything stands:
 
@@ -192,7 +194,7 @@ passes validation.
 | `pdflatex: command not found` | LaTeX isn't installed — see [SETUP.md](SETUP.md); on Debian/Ubuntu you need `texlive-latex-extra` specifically, not just `texlive-latex-base` (the template uses `titlesec`, which isn't in the base set) |
 | `ModuleNotFoundError: No module named 'yaml'` | PyYAML isn't installed — `pip install pyyaml` (or `pip3 install pyyaml` depending on your system) |
 | `jq: command not found` | `sudo apt install jq` (or `brew install jq` on macOS) — used to read fields out of the metadata JSON during compilation |
-| Your coding agent doesn't recognize `/daily` as a command | Not every agent reads `.claude/commands` or `.opencode/commands`. In Codex, use `$career-command-center daily` or say: "read AGENTS.md, then workflows/daily.md, and run the steps using profile/candidate.yaml" |
+| Your coding agent doesn't recognize `/daily` as a command | Not every agent reads `.claude/commands` or `.opencode/commands`. In Codex, use `$daily` or say: "read AGENTS.md, then workflows/daily.md, and run the steps using profile/candidate.yaml" |
 | Not sure what to put in `tracker.backend` | Use `csv` unless you specifically already use Notion and know your database ID — `csv` needs nothing installed and works out of the box |
 
 ### Day-to-day usage

@@ -65,4 +65,6 @@ any tool's proprietary format.
 
 No problem. Just ask directly: "read `AGENTS.md`, then
 `workflows/daily.md`, and execute the steps using `profile/candidate.yaml`."
-In Codex, the repo-scoped shortcut is `$career-command-center daily`.
+In Codex, use repo skills: `$daily`, `$apply-batch`, `$compile-today`,
+`$confirm`, `$interview-prep`, or the generic `$career-command-center daily`.
+Do not type a space after `$`; `$ daily` is plain text, not a skill mention.

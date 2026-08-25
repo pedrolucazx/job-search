@@ -11,6 +11,8 @@ description: >
 # Career Command Center
 
 Use this skill for command-style job-search requests in this repository.
+Short Codex aliases also exist: `$daily`, `$apply-batch`, `$compile-today`,
+`$confirm`, and `$interview-prep`.
 
 Before executing any workflow:
 
