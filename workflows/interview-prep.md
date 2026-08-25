@@ -71,7 +71,7 @@ generic fact about the company.
 
 ## 4. Generate the roteiro
 
-Follow `rules/interview-roteiro.md` in full: the 6-section template
+Follow `rules/interview-roteiro.md` in full: the 7-section template
 contract, the Present→Past→Future timing rule, the conversational tone
 rule, the English B1-B2 framing rule, the honesty rule for gaps (risk level
 + concrete action per `partial`/`absent` item in `metadata.json.gaps[]`),

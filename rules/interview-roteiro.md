@@ -50,7 +50,11 @@ company:
 - Sobre [TEMA]: "[PERGUNTA ESPECÍFICA À VAGA/EMPRESA]"
 - ... (mínimo 4)
 
-## 5. Checklist de preparação
+## 5. Perguntas que eles podem te fazer
+- "[PERGUNTA PROVÁVEL DO RECRUTADOR]" — [nota de como responder, puxando de gaps/metadata.json, soft_skills ou projetos do candidate.yaml]
+- ... (mínimo 3, incluindo obrigatoriamente uma pergunta sobre o gap mais relevante da seção 7)
+
+## 6. Checklist de preparação
 - [ ] Cronometrar a apresentação (deve ficar entre 60–90s)
 - [ ] Gravar áudio/vídeo de si mesmo apresentando
 - [ ] Se for apresentar em inglês: usar Google Tradutor (modo áudio) para validar pronúncia
@@ -60,7 +64,7 @@ company:
 - [ ] [ITENS ESPECÍFICOS DA VAGA]
 - [ ] Ter [PROJETO MAIS RELEVANTE] rodando localmente para demonstrar se pedirem
 
-## 6. Análise crítica de compatibilidade
+## 7. Análise crítica de compatibilidade
 
 **Requisitos obrigatórios atendidos**
 - [REQUISITO] — [evidência do CV]
@@ -92,12 +96,39 @@ Guideline timing: PRESENTE ~25s, PASSADO ~30s, FUTURO ~20s (total 60–90s).
   mention in-progress or completed higher education from
   `profile/candidate.yaml → education` (only if actually present there).
 
+## Employment Status Rule
+
+Before writing PASSADO/PAST, compare `professional_experience[0].period`'s
+end date against today's date:
+
+- **Period still ongoing** (no end date, or end date in the future): may
+  frame the role in present tense ("no meu trabalho atual" / "in my current
+  job").
+- **Period already ended**: the role is a PAST job. Reference it by company
+  name and past tense only ("Na [empresa], atuei..." / "At [company], I
+  worked..."), never "trabalho atual"/"current job" — even if it's still the
+  most recent entry. Mixing "atual" with a past-tense verb is a tell that
+  the script wasn't checked against the actual dates.
+- **Gap between the period's end date and today**: this is a likely
+  recruiter question. Section 5 must include one question addressing it
+  (why looking now / what happened since [end date]), answered briefly and
+  factually using `professional_experience[].end_reason` if present in
+  `candidate.yaml`. If `end_reason` is absent, do not invent one — ask the
+  candidate for it before writing that answer instead of guessing
+  (layoff/restructuring/contract end/personal reasons all read very
+  differently in an interview).
+
 ## Tone Rule
 
 Conversational, as if spoken — never a shopping list of technologies.
 
 - **Errado**: "Trabalho com Node, NestJS, TypeScript, PostgreSQL, Docker, Jest..."
 - **Correto**: "Meu foco é backend com NestJS e TypeScript, especialmente para APIs que precisam de segurança e testes robustos."
+
+Nas seções 1 e 2 (os textos entre aspas, que são falados em voz alta), não usar
+travessão (—) para inserir aposição/parênteses — reescrever com vírgula ou
+frase separada. Travessão lido em voz alta soa como texto decorado, não como
+fala natural.
 
 ## English Section Rule
 
@@ -108,7 +139,7 @@ candidate-agnostic lookup, not specific to any one candidate):
 
 | `languages[].level` for English | Framing |
 |---|---|
-| Básico / Basic | Cautious: keep the EN script shorter/simpler, and note the level honestly in section 6's critical analysis rather than overselling it |
+| Básico / Basic | Cautious: keep the EN script shorter/simpler, and note the level honestly in section 7's critical analysis rather than overselling it |
 | Intermediário / Intermediate | "Conversational, comfortable with technical topics" — matches the B1-B2 vocabulary rule directly |
 | Avançado / Advanced, Fluente / Fluent, Nativo / Native | Full script, no hedging needed |
 
