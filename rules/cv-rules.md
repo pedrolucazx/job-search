@@ -23,6 +23,37 @@ frontend, mobile, IoT, data, etc. Instead:
 5. A `personal_projects` item without a filled-in `link`: cite it without a
    hyperlink, never invent a repository URL.
 
+## Professional Summary (Resumo Profissional)
+
+Never a single generic sentence that just restates the Skills section in
+prose (e.g. "Desenvolvedor backend com experiência em X, Y, Z, testes e
+CI/CD" — that's filler, not evidence). Write 3-5 sentences:
+
+1. Years of experience + the 2-3 stack items the job cares about most (same
+   ranking as "Content Selection by Stack Overlap" below).
+2. At least one sentence naming a real, concrete system from
+   `professional_experience[].projects[]` relevant to the job (the actual
+   project/client name, e.g. "FHEMIG", "Celcoin (BaaS)", "SES-RS") — a named
+   system is what makes the summary read as evidence instead of a skills
+   list. Never invent one; if no project overlaps the job's stack, name the
+   most senior/complex one available instead of skipping this sentence.
+3. A closing sentence on how the candidate works (autonomy, code quality,
+   collaboration), toned to the job's seniority (see "Selection by Job
+   Seniority" below).
+
+## AI-Assisted Development Workflow (when the job asks for it)
+
+If the job posting mentions AI-assisted development as a skill or
+requirement (Claude Code, Copilot, Cursor, "AI-driven development",
+"prompt engineering as part of the SDLC", etc.), cite
+`profile/candidate.yaml → ai_development_workflow` in the Resumo
+Profissional or Experience Bullets — in addition to, never instead of, the
+`Inside My Mind` personal project (`personal_projects[P5/P6]`) when that
+project overlaps the job's stack. The workflow field describes how the
+candidate actually works with AI day to day; the project is a shipped
+artifact — the two are complementary evidence, not a substitute for each
+other. Never invent a tool/agent name beyond what's literally in that field.
+
 ## Entry-Level Candidates (No Experience Yet)
 
 If `professional_experience` and `personal_projects` are both empty, that's
@@ -71,8 +102,13 @@ Format: **ACTION VERB + TECHNICAL CONTEXT + RESULT/SCOPE**.
 
 - 4 to 6 bullets per experience, starting with the most relevant to the job.
 - Vary the verb — never repeat the same verb in consecutive bullets.
-- Base bullets on `professional_experience[].responsibilities` — don't
-  invent a responsibility that isn't listed there.
+- Base bullets on `professional_experience[].responsibilities`, and weave in
+  named systems from `professional_experience[].projects[]` where relevant
+  to the job's stack (the real project/client name, e.g. "Celcoin (BaaS)",
+  "FHEMIG", "SES-RS") — don't invent a responsibility or project detail that
+  isn't listed there, but don't flatten a bullet into only the generic
+  responsibility line either; a named system grounds the claim as evidence
+  instead of a skills list restated in prose.
 - If the profile distinguishes tools by context (e.g. one ORM used at work
   and another in personal projects), respect that distinction — don't
   transplant a personal-project tool into a professional-experience bullet
