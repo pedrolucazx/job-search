@@ -73,6 +73,14 @@ about a specific job's content, not the company posting it. Don't mention
 these jobs in the ranked table at all, not even as "excluded" — they're
 silently dropped at this stage.
 
+**Filtering gender-restricted postings**: drop any job whose title signals it's
+restricted to a gender the candidate doesn't fit (e.g. "vaga para mulheres",
+"women only", "woman in tech") — see `preferences.deal_breakers` in
+`profile/candidate.yaml`. Unlike the work-arrangement deal breaker, this one
+is detectable straight from the title/tag, no full-description fetch needed,
+so apply it here at step 1, same as `blocked_companies`: don't mention these
+jobs in the ranked table at all, not even as "excluded".
+
 **Detecting jobs with no CV needed**: if the destination platform uses an
 already-registered profile instead of a PDF (e.g. certain ATS platforms —
 this varies by market/country, adjust per profile), mark the job as
