@@ -1,0 +1,161 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Vohpy",
+      "x": 0,
+      "y": 0,
+      "name": "LinkedIn Banner",
+      "clip": true,
+      "width": 1584,
+      "height": 396,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 115,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "$bg-deep",
+            "position": 0
+          },
+          {
+            "color": "$bg-lift",
+            "position": 1
+          }
+        ]
+      },
+      "gap": 40,
+      "padding": [
+        0,
+        170,
+        0,
+        480
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "LLLp1",
+          "name": "Accent Rule",
+          "fill": "$accent",
+          "width": 3,
+          "height": 206
+        },
+        {
+          "type": "frame",
+          "id": "p6UP5E",
+          "name": "Content",
+          "layout": "vertical",
+          "gap": 30,
+          "children": [
+            {
+              "type": "frame",
+              "id": "t1ovPC",
+              "name": "Identity",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K5N3Q",
+                  "name": "Name",
+                  "fill": "$text-strong",
+                  "content": "PEDRO MESQUITA",
+                  "lineHeight": 1.05,
+                  "fontFamily": "$font-ui",
+                  "fontSize": 80,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "cJOpn",
+                  "name": "Role",
+                  "fill": "$text-mid",
+                  "content": "Desenvolvedor Full Stack",
+                  "lineHeight": 1.2,
+                  "fontFamily": "$font-ui",
+                  "fontSize": 38,
+                  "fontWeight": "500",
+                  "letterSpacing": 0.5
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mpGTx",
+              "name": "Meta",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "PMRjM",
+                  "name": "Stack",
+                  "fill": "$text-stack",
+                  "content": "React · Next.js · Node.js · NestJS · PostgreSQL",
+                  "lineHeight": 1.3,
+                  "fontFamily": "$font-mono",
+                  "fontSize": 27,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "QoiCZ",
+                  "name": "Site",
+                  "fill": "$accent",
+                  "content": "pedromesquitadev.com.br",
+                  "lineHeight": 1.3,
+                  "fontFamily": "$font-mono",
+                  "fontSize": 27,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bg-deep": {
+      "type": "color",
+      "value": "#0C1116"
+    },
+    "bg-lift": {
+      "type": "color",
+      "value": "#141E28"
+    },
+    "text-strong": {
+      "type": "color",
+      "value": "#F2F5F8"
+    },
+    "text-mid": {
+      "type": "color",
+      "value": "#A8B8C7"
+    },
+    "text-stack": {
+      "type": "color",
+      "value": "#D2DCE6"
+    },
+    "accent": {
+      "type": "color",
+      "value": "#5BC8A4"
+    },
+    "font-ui": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-mono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    }
+  },
+  "fileToken": "c9192d31-453c-4219-9062-1577f14be870"
+}
