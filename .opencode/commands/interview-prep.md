@@ -1,7 +1,7 @@
 ---
 description: Generates the interview script (presentation + fit analysis) for an already-confirmed job
 agent: build
-model: opencode/mimo-v2.5-free
+model: console-nvidia/moonshotai/kimi-k3
 ---
 
 Read `workflows/interview-prep.md` and execute the steps described there for
