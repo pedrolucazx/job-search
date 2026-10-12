@@ -84,6 +84,10 @@ the candidate's seniority (`preferences.seniority_by_stack`, if filled in):
 | Mid-level | Technical autonomy, driving work | Led, Defined, Ensured, Implemented |
 | Junior | Fundamentals, delivery, learning | Developed, Implemented, Collaborated |
 
+The verbs above are listed in dictionary form; conjugate them in the first
+person in the CV itself (Liderei, Defini, Garanti, Implementei, Desenvolvi,
+Colaborei) — see "Experience Bullets" below.
+
 If `preferences.seniority_by_stack` flags a mismatch (the job asks for a
 level above what the candidate declared for that stack), report it in the
 evaluation — it doesn't block CV generation by itself, but the agent should
@@ -100,6 +104,27 @@ keeping the bilingual pair — never add a 7th.
 
 Format: **ACTION VERB + TECHNICAL CONTEXT + RESULT/SCOPE**.
 
+- **Always first person, never third person.** The candidate is the one
+  speaking: "Migrei a produção para AWS", "Implementei o backend",
+  "Construí componentes" — never "Migrou", "Implementou", "Construiu". A
+  third-person bullet reads like someone else describing the candidate,
+  which is not what a CV is. This applies to every narrative line in the
+  document, not just the experience bullets: the Resumo Profissional and the
+  project descriptions follow the same rule. In English CVs the verb is the
+  bare past tense with the subject dropped, as is standard there ("Migrated
+  production to AWS"), which is already first person — the failure mode to
+  watch for is Portuguese third-person conjugation.
+- **No em dashes (travessoes) anywhere in the document.** Use a comma, a
+  colon, a period or parentheses instead. This covers prose dashes in the
+  summary and bullets, the `---` separator between a project name and its
+  link, and any em dash carried over from a name in
+  `profile/candidate.yaml` (e.g. "Inside My Mind — API" is rendered
+  "Inside My Mind: API"; changing a separator is formatting, not editing the
+  fact). En dashes in date ranges ("Nov 2021 – Fev 2026") are date
+  formatting, not prose dashes, and stay.
+- Project descriptions are bullets too, not noun phrases — "Construí a API
+  em Fastify" rather than "API em Fastify". A noun phrase hides who did the
+  work.
 - 4 to 6 bullets per experience, starting with the most relevant to the job.
 - Vary the verb — never repeat the same verb in consecutive bullets.
 - Base bullets on `professional_experience[].responsibilities`, and weave in
@@ -158,6 +183,10 @@ English).
 
 1. No invented data — every bullet/project/skill traceable to
    `profile/candidate.yaml`.
+1.5. Every narrative line in the first person, with no third-person verb
+   ("Desenvolveu", "Migrou", "Implementou") anywhere in the summary,
+   experience bullets or project descriptions, and zero em dashes in the
+   compiled PDF (`pdftotext <pdf> - | grep -c "—"` must print 0).
 2. Institution/project/technology names spelled exactly as in the profile
    (check for typos).
 3. Repository links as real hyperlinks, only for items with `link` filled
