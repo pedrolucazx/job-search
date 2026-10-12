@@ -44,7 +44,8 @@ for q in "${QUERIES[@]}"; do
   # freehire's --limit IS the real API page size, so ask for 40 in one call
   # instead of looping pages.
   bun run .agents/skills/freehire-search/cli/src/cli.ts search \
-    -q "$q" --country BR --remote remote --jobage 14 --limit 40 --format json
+    -q "$q" --country BR --remote remote --jobage 14 --limit 40 \
+    --seniority junior,middle --format json
 done
 ```
 
@@ -73,6 +74,17 @@ about a specific job's content, not the company posting it. Don't mention
 these jobs in the ranked table at all, not even as "excluded" — they're
 silently dropped at this stage.
 
+**Filtering blocked sources**: drop any job whose URL host matches an entry in
+`preferences.blocked_sources` (substring match on the host, case-insensitive),
+at the same stage and with the same silence as `blocked_companies` — not
+mentioned in the table at all. This blocks a *destination platform*, not an
+employer: the same company stays eligible through another source, so match on
+the URL, never on the company name. Note that aggregators rewrite links, so one
+posting can surface twice under different hosts — dedup by company + role
+happens first, and the surviving copy is the one whose host gets checked; if
+the copy that survives dedup is the blocked one, prefer keeping the copy from
+an allowed host instead of dropping the job entirely.
+
 **Filtering gender-restricted postings**: drop any job whose title signals it's
 restricted to a gender the candidate doesn't fit (e.g. "vaga para mulheres",
 "women only", "woman in tech") — see `preferences.deal_breakers` in
@@ -80,6 +92,23 @@ restricted to a gender the candidate doesn't fit (e.g. "vaga para mulheres",
 is detectable straight from the title/tag, no full-description fetch needed,
 so apply it here at step 1, same as `blocked_companies`: don't mention these
 jobs in the ranked table at all, not even as "excluded".
+
+**Filtering seniority above the candidate's ceiling**: drop any job whose title
+declares a level above the ceiling in `preferences.seniority_by_stack` —
+Sênior, Senior, Sr, Especialista, Specialist, Staff, Lead, Tech Lead,
+Principal, Master, Architect, and roman numerals above the candidate's level.
+See `preferences.deal_breakers` in `profile/candidate.yaml` and
+`rules/job-evaluation.md` → Seniority Mismatch. Like the gender filter, this is
+readable straight from the title, so it belongs here at step 1, not at the
+`apply-batch` gate: on 2026-10-11 a batch of 35 produced 12 CVs of which 10
+were Sênior/Especialista, all discarded unread. A title spanning a range that
+includes an accepted level ("Pleno / Sênior", "PL/SR") passes. Don't mention
+the dropped ones in the ranked table at all.
+
+Where the source supports a seniority facet, filter at the API instead of
+post-filtering: freehire takes `--seniority junior,middle`. LinkedIn has **no**
+seniority flag on search (the field only comes back on `detail`, and it's
+usually `Not Applicable`), so there the title match above is the only filter.
 
 **Detecting jobs with no CV needed**: if the destination platform uses an
 already-registered profile instead of a PDF (e.g. certain ATS platforms —

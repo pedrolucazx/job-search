@@ -142,6 +142,12 @@ preferences:
   deal_breakers:
     - "100% on-site"
     - "No app published in production"
+    # A seniority deal breaker is read at step 1 of workflows/daily.md, straight
+    # from the job title, so a posting above the ceiling below never reaches the
+    # CV stage. Drop this entry to go back to flagging the mismatch instead of
+    # excluding it (see rules/job-evaluation.md -> Seniority Mismatch). A title
+    # spanning an accepted level ("Mid-level/Senior", "PL/SR") is never excluded.
+    - "Level above the ceiling in preferences.seniority_by_stack (Senior, Staff, Lead, Principal, Specialist, Architect)"
   seniority_by_stack:
     "Kotlin/Android": "Mid-level/Senior"
     "Swift/iOS": "Junior/Mid-level"

@@ -102,10 +102,19 @@ guessing wrong in either direction.
 
 ## Seniority Mismatch
 
-If `preferences.seniority_by_stack` exists and the job asks for a different
-level than declared for that stack: not a deal breaker (doesn't exclude by
-itself), but flag it clearly in the table/gap notes — the candidate decides
-whether to apply anyway.
+If `preferences.seniority_by_stack` exists and the job asks for a level
+**above** the ceiling declared for that stack, treat it as a deal breaker when
+`preferences.deal_breakers` says so — exclude the job from the table entirely,
+the same as any other deal breaker. It's detectable straight from the title
+(Sênior, Senior, Sr, Especialista, Specialist, Staff, Lead, Principal, Master,
+and roman numerals above the candidate's level), so apply it at step 1 of
+`workflows/daily.md`, before any full-description fetch.
+
+A level **below** the ceiling (e.g. a Júnior posting for a Pleno candidate) is
+not a deal breaker — flag it in the gap notes and let the candidate decide.
+
+Where the posting spans a range that includes an accepted level ("Pleno /
+Sênior", "PL/SR"), it passes: the candidate is eligible for the lower end.
 
 ## Two Evaluation Stages
 
