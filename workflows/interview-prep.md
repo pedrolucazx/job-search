@@ -55,6 +55,11 @@ the given company (case-insensitive, e.g. `dexian` matches
   `soft_skills`, `professional_experience` (including `duration_note` /
   `period`), `personal_projects`, `preferences.target_industries` /
   `target_roles`.
+- `documents/interview-answers.md` — the candidate's approved answers to the
+  HR questions that repeat in every process. Section 5 of the roteiro copies
+  them literally (see `rules/interview-roteiro.md` → "Fixed Behavioral
+  Questions Rule"). If the file is missing, say so in the report instead of
+  writing an answer from scratch.
 
 ## 3. Refresh job and company context
 
@@ -72,7 +77,8 @@ generic fact about the company.
 ## 4. Generate the roteiro
 
 Follow `rules/interview-roteiro.md` in full: the 7-section template
-contract, the Present→Past→Future timing rule, the conversational tone
+contract (including the fixed behavioral answers copied literally into
+section 5), the Present→Past→Future timing rule, the conversational tone
 rule, the English B1-B2 framing rule, the honesty rule for gaps (risk level
 + concrete action per `partial`/`absent` item in `metadata.json.gaps[]`),
 the minimum-4-questions rule, and the data-sourcing sub-rules (years of
@@ -81,7 +87,16 @@ experience, motivation sentence, most-relevant-project selection reusing
 
 ## 5. Save the output
 
-Write to `<folder>/roteiro.md`.
+Write to `<folder>/roteiro.md`, then run the structural gate before reporting:
+
+```bash
+python3 scripts/check_roteiro.py documents/applications/<slug>/
+```
+
+Exit code 1 means the output broke the template contract (missing section,
+leftover placeholder, unaddressed gap, or a fixed behavioral answer that
+wasn't copied in). Fix `roteiro.md` and re-run until it passes, the same way
+the CV goes through the ATS check.
 
 ## 6. Update the local outcome record
 

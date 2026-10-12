@@ -24,12 +24,19 @@ REQUIRED_SECTIONS = [
     "## 1. Roteiro PT-BR",
     "## 2. Roteiro EN",
     "## 3. Pontos-chave",
-    "## 4. Perguntas",
-    "## 5. Checklist",
-    "## 6. Análise crítica",
+    "## 4. Perguntas para fazer",
+    "## 5. Perguntas que eles podem",
+    "## 6. Checklist",
+    "## 7. Análise crítica",
 ]
 
-REQUIRED_SUBHEADINGS_SECTION_6 = [
+# rules/interview-roteiro.md -> "Fixed Behavioral Questions Rule": section 5
+# always carries these questions, with the answer copied literally from
+# documents/interview-answers.md. One marker per fixed question, matched
+# case-insensitively, so a reworded heading still counts.
+FIXED_BEHAVIORAL_MARKERS = ["desagrada"]
+
+REQUIRED_SUBHEADINGS_SECTION_7 = [
     "Requisitos obrigatórios atendidos",
     "Diferenciais atendidos",
     "Atende parcialmente",
@@ -66,8 +73,11 @@ def check(roteiro_text: str, metadata: dict) -> list[str]:
     if placeholders:
         errors.append(f"unfilled template placeholder(s) left in output: {placeholders}")
 
-    section_4_start = roteiro_text.find("## 4. Perguntas")
-    section_5_start = roteiro_text.find("## 5. Checklist")
+    section_4_start = roteiro_text.find("## 4. Perguntas para fazer")
+    section_5_start = roteiro_text.find("## 5. Perguntas que eles podem")
+    section_6_start = roteiro_text.find("## 6. Checklist")
+    section_7_start = roteiro_text.find("## 7. Análise crítica")
+
     if section_4_start != -1 and section_5_start != -1:
         section_4_text = roteiro_text[section_4_start:section_5_start]
         n_questions = len(re.findall(r"^-\s+", section_4_text, re.MULTILINE))
@@ -76,26 +86,35 @@ def check(roteiro_text: str, metadata: dict) -> list[str]:
                 f"only {n_questions} recruiter question(s) found, need >= {MIN_RECRUITER_QUESTIONS}"
             )
 
-    section_6_start = roteiro_text.find("## 6. Análise crítica")
     if section_5_start != -1 and section_6_start != -1:
-        section_5_text = roteiro_text[section_5_start:section_6_start]
-        n_checklist = len(re.findall(r"^-\s+\[ \]", section_5_text, re.MULTILINE))
+        section_5_text = roteiro_text[section_5_start:section_6_start].lower()
+        for marker in FIXED_BEHAVIORAL_MARKERS:
+            if marker.lower() not in section_5_text:
+                errors.append(
+                    f"section 5 is missing the fixed behavioral question matching {marker!r} "
+                    "— copy it plus its approved answer literally from "
+                    "documents/interview-answers.md"
+                )
+
+    if section_6_start != -1 and section_7_start != -1:
+        section_6_text = roteiro_text[section_6_start:section_7_start]
+        n_checklist = len(re.findall(r"^-\s+\[ \]", section_6_text, re.MULTILINE))
         if n_checklist < MIN_CHECKLIST_ITEMS:
             errors.append(
                 f"only {n_checklist} checklist item(s) found, need >= {MIN_CHECKLIST_ITEMS}"
             )
 
-    section_6_text = roteiro_text[section_6_start:] if section_6_start != -1 else ""
-    for subheading in REQUIRED_SUBHEADINGS_SECTION_6:
-        if subheading not in section_6_text:
-            errors.append(f"section 6 is missing required subheading: {subheading!r}")
+    section_7_text = roteiro_text[section_7_start:] if section_7_start != -1 else ""
+    for subheading in REQUIRED_SUBHEADINGS_SECTION_7:
+        if subheading not in section_7_text:
+            errors.append(f"section 7 is missing required subheading: {subheading!r}")
 
     for gap in metadata.get("gaps", []):
         skill = gap.get("skill", "")
-        if skill and skill.lower() not in section_6_text.lower():
+        if skill and skill.lower() not in section_7_text.lower():
             errors.append(
                 f"gap {skill!r} (status={gap.get('status')}) from metadata.json is not "
-                "mentioned anywhere in section 6 — every non-full gap must be addressed honestly"
+                "mentioned anywhere in section 7 — every non-full gap must be addressed honestly"
             )
 
     return errors

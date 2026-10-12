@@ -53,6 +53,7 @@ company:
 ## 5. Perguntas que eles podem te fazer
 - "[PERGUNTA PROVÁVEL DO RECRUTADOR]" — [nota de como responder, puxando de gaps/metadata.json, soft_skills ou projetos do candidate.yaml]
 - ... (mínimo 3, incluindo obrigatoriamente uma pergunta sobre o gap mais relevante da seção 7)
+- "O que te desagrada em um ambiente de trabalho?" — [resposta aprovada, copiada LITERALMENTE do banco de respostas; ver "Fixed Behavioral Questions Rule"]
 
 ## 6. Checklist de preparação
 - [ ] Cronometrar a apresentação (deve ficar entre 60–90s)
@@ -151,7 +152,7 @@ only has a CV-style tag, use only that tag to pick the row above.
 
 Never soften a gap. Every requirement that is `partial` or `absent` in the
 job's gap table (see `rules/job-evaluation.md` and the job's
-`metadata.json → gaps[]`) must appear in section 6 **using the same literal
+`metadata.json → gaps[]`) must appear in section 7 **using the same literal
 skill term as `metadata.json`** (a natural-language paraphrase in Portuguese
 is fine alongside it, but the literal term must also be present — e.g. write
 "Microservices (arquitetura de microsserviços)", not just the Portuguese
@@ -166,6 +167,32 @@ If the job's contract type is PJ (`Modelo de contrato` on the job, or
 inferred from the posting), add a reminder in the honest verdict paragraph:
 calculate a minimum rate 40–60% above the CLT-equivalent salary, to account
 for the candidate's own tax/benefits burden under PJ.
+
+## Fixed Behavioral Questions Rule
+
+Section 5 is not only job-specific. A few HR questions come up in essentially
+every process, and one of them already cost a real process when it was answered
+from scratch, so their answers are **not** re-improvised per job. Current fixed
+list:
+
+- "O que te desagrada em um ambiente de trabalho?" (same question, other
+  wordings: o que te faria sair de uma empresa / o que não funciona pra você
+  num time / teve algo no seu último trabalho que te incomodou)
+
+For every question on this list, section 5 must carry the question plus the
+approved answer copied **literally** from the candidate's answer bank at
+`documents/interview-answers.md` (gitignored, one `##` heading per question).
+Never paraphrase, compress or re-derive it: that wording was tuned after a
+rejection whose declared reason was the earlier phrasing, and any drift
+reintroduces the exact failure mode (an answer that describes a structure the
+employer must already have, instead of a way of working).
+
+If `documents/interview-answers.md` is missing, or has no heading for a fixed
+question, don't invent one: generate the rest of the roteiro and ask the
+candidate to write that answer first — same rule as `end_reason` above.
+
+`scripts/check_roteiro.py` enforces the presence mechanically, so a roteiro
+that skips it fails the gate instead of silently shipping.
 
 ## Recruiter Questions Rule
 
