@@ -1,7 +1,6 @@
 ---
 description: Compiles today's CVs, runs the ATS check, and archives (doesn't touch the tracker)
 agent: build
-model: opencode/north-mini-code-free
 ---
 
 Read `workflows/compile.md` and execute the steps described there for the

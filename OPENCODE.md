@@ -37,8 +37,11 @@ ATS check → archives into `documents/applications/`.
 **It never touches the tracker.** Registering an application is `/confirm`'s job
 alone, after you confirm the CV was actually sent — see `workflows/compile.md`.
 
-Implemented in `.opencode/commands/compile-today.md`, already with
-`north-mini-code-free` pinned in the frontmatter — no need to pick a model by hand.
+Implemented in `.opencode/commands/compile-today.md`. It pins no model: the
+`north-mini-code-free` it used to pin is gone from OpenCode Zen (see the table
+below), so it runs on whatever your OpenCode default is, same as `/daily`,
+`/apply-batch` and `/confirm`. Only `/interview-prep` still pins one
+(`mimo-v2.5-free`).
 
 > ⚠️ **Setup pending**: `pdflatex` isn't installed in this environment
 > (`sudo apt install texlive-latex-base texlive-latex-recommended texlive-fonts-recommended`,
@@ -48,20 +51,24 @@ Implemented in `.opencode/commands/compile-today.md`, already with
 
 ---
 
-## 2. Available free models (OpenCode Zen)
+## 2. Available models (OpenCode Zen)
 
-| Model | What's known |
-|---|---|
-| `opencode/big-pickle` | A "stealth" model (code name, provider doesn't reveal which one it is). No size/speed signal in the name. |
-| `opencode/deepseek-v4-flash-free` | DeepSeek line, "flash" variant (optimized for speed/cost). **Your current default on OpenCode.** |
-| `opencode/mimo-v2.5-free` | MiMo line (Xiaomi) — historically this line focuses on reasoning/math relative to its size. |
-| `opencode/north-mini-code-free` | "mini" + "code" in the name — signals a small/fast model tuned for code and tool-calling. 256K context per third-party aggregators. |
+Last verified: 2026-09-01 via `opencode models`.
 
-⚠️ **This is name-based heuristic, not benchmark**: OpenCode Zen's official
-documentation doesn't publish a capability comparison between these 4 — it only
-confirms they're free for a limited time (usage data may be retained to improve
-the model, avoid pasting sensitive information). Adjust the table below as you
-observe in practice.
+### Free tier (OpenCode-branded)
+
+| Model | Status | What's known |
+|---|---|---|
+| `opencode/big-pickle` | ✅ Available | Stealth model — provider doesn't reveal which one. No size/speed signal. |
+| `opencode/mimo-v2.5-free` | ✅ Available | MiMo line (Xiaomi) — reasoning/math focus. **Pinned by `/interview-prep`.** |
+| `opencode/deepseek-v4-flash-free` | ❌ Not available | Removed from current version. |
+| `opencode/north-mini-code-free` | ❌ Not available | Removed from current version. |
+
+### Paid / usage-metered (also on the account)
+
+Google, NVIDIA, and OpenAI models are also listed (e.g. `google/gemini-3.5-flash`, `nvidia/deepseek-ai/deepseek-v4-flash`, `openai/gpt-5.5`). These are **not free-tier** — usage counts against quota or bills.
+
+⚠️ **Heuristic, not benchmark**: OpenCode doesn't publish capability comparisons. Adjust based on observation.
 
 ---
 
@@ -69,10 +76,13 @@ observe in practice.
 
 | Task (inside `/compile-today`) | Suggested model | Why |
 |---|---|---|
-| Run `pdflatex`, `pdftotext`, parse JSON, call the Notion MCP | `north-mini-code-free` | Mechanical tool-calling/bash, little judgment needed — "code" in the name is the strongest signal we have. |
-| Interpret a LaTeX compile error (overfull hbox, missing package) and propose a fix | `mimo-v2.5-free` | Needs real reasoning about the root cause, not just following steps. |
-| Final daily report / `/status` | `deepseek-v4-flash-free` | Your current default — summarizing text is light work, no need to switch. |
-| Fallback — if the three above get stuck or give a bad answer on a tricky job | `big-pickle` | Reserve option with no clear signal in the name; free, so it costs nothing to try before falling back to Claude. |
+| Run `pdflatex`, `pdftotext`, parse JSON, call the Notion MCP | `mimo-v2.5-free` | Only free option available for tool-calling. |
+| Interpret a LaTeX compile error (overfull hbox, missing package) and propose a fix | `mimo-v2.5-free` | Needs reasoning about root cause. |
+| Final daily report / `/status` | `mimo-v2.5-free` | Only free option — summarizing is light work. |
+| Fallback | `big-pickle` | Second free option if mimo struggles. |
+
+> ⚠️ Only 2 free models remain: `mimo-v2.5-free` and `big-pickle`. If neither
+> works for a task, fall back to Claude (this session's model).
 
 Switching models mid-OpenCode-session: `/models` in the TUI, or pin it per
 command (Section 4).
@@ -86,20 +96,19 @@ OpenCode's custom commands live in `.opencode/commands/*.md`, just like
 
 ```markdown
 ---
-description: Compiles today's CVs, runs the ATS check, and archives (doesn't touch the tracker)
+description: Generates the interview script (presentation + fit analysis) for an already-confirmed job
 agent: build
-model: opencode/north-mini-code-free
+model: opencode/mimo-v2.5-free
 ---
 
-Read daily/<date>/*.json and for each one: compile the .tex with pdflatex,
-run pdftotext -layout for the ATS check, and archive it.
+Read workflows/interview-prep.md and execute the steps described there.
 ```
 
-This way `/compile-today` always opens with `north-mini-code-free` without you
-needing to select it on the spot. Smaller commands (`/ats-check`,
-`/register-notion`, `/status`, `/compile-last`) are left for when they're
-actually used — the same reasoning that held back `/interview-prep` until it
-became a real need (see `.opencode/commands/interview-prep.md`, now
-implemented with `mimo-v2.5-free` — that task requires fine judgment about
-tone/honesty on gaps, not mechanical tool-calling, which is why it doesn't use
-`north-mini-code-free`).
+This way `/interview-prep` always opens with `mimo-v2.5-free` without you
+needing to select it on the spot. It's the only command that pins one today:
+leave `model:` out and the command runs on your OpenCode default, which is
+what `/compile-today`, `/daily`, `/apply-batch` and `/confirm` do. Pin a model
+only when a command genuinely needs that one, otherwise the pin rots the way
+`north-mini-code-free` did when it left the free tier.
+
+> ⚠️ Only 2 free models available: `mimo-v2.5-free` and `big-pickle`.
