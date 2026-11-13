@@ -37,7 +37,8 @@ DEFAULT_TERMS = ["desenvolvedor", "developer", "engenheiro de software", "softwa
 # Same ceiling as /daily step 1 (profile/candidate.yaml deal_breakers). A range
 # that includes an accepted level ("Pleno/Sênior", "PL/SR") passes.
 ABOVE_CEILING = re.compile(r"s[eê]nior|\bsr\b|especialista|specialist|\bstaff\b|\blead(?:er)?\b|principal|"
-                           r"\bmaster\b|architect|arquitet|\biii\b|\biv\b", re.I)
+                           r"\bmaster\b|architect|arquitet|\biii\b|\biv\b|coordena|l[ií]der\b|gerente|"
+                           r"\bmanager\b|\bhead\b", re.I)
 # "PL/SQL" and "Middleware" are not levels.
 ACCEPTED_IN_RANGE = re.compile(r"pleno|\bpl\b(?!\s*/?\s*sql)|j[uú]nior|\bjr\b|\bmid\b", re.I)
 

@@ -124,3 +124,54 @@ class TestCvVoice(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+import inhire_search  # noqa: E402
+
+
+class TestInhire(unittest.TestCase):
+    def page(self, *jobs):
+        return {"jobsPage": [{"jobId": jid, "displayName": name, "workplaceType": wp, "status": "published"}
+                             for jid, name, wp in jobs]}
+
+    def test_list_filter(self):
+        page = self.page(("a", "🚀 | Desenvolvedor Full Stack Pleno", "Remote"),
+                         ("b", "Desenvolvedor Pleno", "Hybrid"),
+                         ("c", "People Partner | Mid-Level", "Remote"),
+                         ("d", "Desenvolvedor Sênior", "Remote"),
+                         ("e", "Pessoa Coordenadora de Engenharia de Software", "Remote"))
+        self.assertEqual([j["jobId"] for j in inhire_search.candidate_jobs(page)], ["a"])
+
+    def test_search_reads_detail_filters_date_and_isolates_failures(self):
+        import urllib.error
+        details = {"a": {"jobId": "a", "displayName": "🚀 | Dev Node Pleno", "tenantName": "Acme",
+                         "publishedAt": "2026-11-10T10:00:00Z", "description": "<p>Node</p>", "location": "BR"},
+                   "b": {"jobId": "b", "displayName": "Dev Java Pleno", "tenantName": "Acme",
+                         "publishedAt": "2026-09-01T10:00:00Z", "description": "", "location": "BR"}}
+
+        def get(url, tenant):
+            if tenant == "down":
+                raise urllib.error.URLError("dns")
+            if url.endswith("/pages"):
+                return self.page(("a", "Dev Node Pleno", "Remote"), ("b", "Dev Java Pleno", "Remote"))
+            return details[url.rsplit("/", 1)[1]]
+        out = inhire_search.search(["down", "acme"], days=14, today=date(2026, 11, 13), get=get)
+        self.assertEqual(out["meta"]["failed_tenants"], ["down"])
+        self.assertEqual(len(out["results"]), 1)
+        r = out["results"][0]
+        self.assertEqual((r["title"], r["company"], r["url"], r["description"], r["source"]),
+                         ("Dev Node Pleno", "Acme", "https://acme.inhire.app/vagas/a/vaga", "Node", "inhire"))
+
+    def test_tenant_list_grows_from_history(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "documents" / "applications" / "x").mkdir(parents=True)
+            (root / "daily" / "2026-11-13").mkdir(parents=True)
+            tenants = root / "documents" / "inhire_tenants.txt"
+            tenants.write_text("radix\n")
+            (root / "daily" / "2026-11-13" / "j.json").write_text('{"url": "https://gx2.inhire.app/vagas/1"}')
+            (root / "documents" / "applications" / "x" / "metadata.json").write_text(
+                '{"url": "https://api.inhire.app/x https://db1.inhire.app/vagas/2"}')
+            self.assertEqual(inhire_search.known_tenants(tenants, root), ["db1", "gx2", "radix"])
+            self.assertEqual(tenants.read_text().split(), ["db1", "gx2", "radix"])

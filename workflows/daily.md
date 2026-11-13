@@ -54,9 +54,19 @@ done
 # result already carries the full description and a structured
 # workplaceType, so it skips both the page fetch and the "Remoto" badge check.
 python3 scripts/gupy_search.py --days 14
+
+# InHire has no central board: each company has <tenant>.inhire.app. The
+# script reads the public API per tenant (documents/inhire_tenants.txt plus
+# every *.inhire.app already seen in daily/ and documents/applications/, so the
+# list grows by itself). Same output shape, full description included.
+python3 scripts/inhire_search.py --days 14
 ```
 
-Gupy results come pre-filtered (remote only, title within the ceiling) and
+To grow the InHire list faster, add a tenant (the subdomain) to
+`documents/inhire_tenants.txt` whenever an InHire posting or e-mail
+(`<tenant>@ses-mail.inhire.app`) shows up.
+
+Gupy and InHire results come pre-filtered (remote only, title within the ceiling) and
 with `"source": "gupy"`; blocked companies and dedup still apply below. The
 `workplaceType` is the company's own field, so it replaces the logged-in badge
 check, but not the deal-breaker read of the description in apply-batch 2.5:

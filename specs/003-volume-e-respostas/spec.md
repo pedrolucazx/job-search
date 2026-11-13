@@ -15,6 +15,7 @@ só entrava pelo freehire.
 | Item | Origem | Aqui |
 |---|---|---|
 | Gupy como fonte fixa | nosso (dado do funil) | `scripts/gupy_search.py`, API pública do portal: descrição completa e `workplaceType` estruturado, filtro remoto/14 dias/teto no título. Passo 1 do `/daily`. Medido: 503 varridas, 52 remotas sem Sênior em 14 dias |
+| InHire como fonte | nosso | `scripts/inhire_search.py`: sem portal central, API pública por empresa com header `X-Tenant`; lista de empresas em `documents/inhire_tenants.txt` que cresce com o histórico. Medido: 25 empresas, 1204 vagas varridas, 13 remotas dentro do teto em 14 dias |
 | Java Pleno | decisão do usuário | teto do Java passou de Júnior para Júnior/Pleno (perfil declara 4 anos) |
 | Anos exigidos na JD | `jd-years.mjs` | `scripts/jd_years.py` + passo 2.5 do apply-batch: `above` no Gupy exclui (pergunta eliminatória), fora do Gupy vira `partial` |
 | Banco de respostas | `application-answers` | `profile.application_answers` + `rules/application-answers.md` + passo 4.5 do apply-batch |
