@@ -95,6 +95,13 @@ class TestAnalyze(unittest.TestCase):
              mock.patch.object(ao, "fetch_pages", side_effect=urllib.error.URLError("dns")):
             self.assertEqual(ao.main(["--out", str(self.apps / "f.json")]), 1)
 
+    def test_study_weights_low_fit_gaps_higher(self):
+        f = self.run_rows([row("A", "Aplicado", feedback="Score 60%", gaps=["Kafka"]),
+                           row("B", "Aplicado", feedback="Score 95%", gaps=["AWS"]),
+                           row("C", "Aplicado", feedback="Score 95%", gaps=["AWS"])])
+        self.assertEqual(f["study"][0], {"gap": "Kafka", "weight": 0.4, "sent": 1})
+        self.assertEqual(f["study"][1], {"gap": "AWS", "weight": 0.1, "sent": 2})
+
     def test_by_source(self):
         f = self.run_rows([row("A", "Aplicado"), row("B", "Rejeitado"), row("C", "Aplicado", fonte="Gupy")])
         src = {s["group"]: s for s in f["by_source"]}

@@ -157,6 +157,22 @@ preferences:
   # volume, bad experience, mandatory intro video, etc.)
   blocked_companies: []
 
+# Answers for application forms. rules/application-answers.md copies these
+# verbatim; anything not listed here gets asked to the candidate, never guessed.
+application_answers:
+  salary_clt: "R$ X por mês"
+  salary_pj: "R$ Y por mês"
+  start_date: "Imediata"
+  work_model: "Somente remoto."
+  contract: "CLT ou PJ"
+  location: "City, State"
+  english: "Intermediate"
+  total_experience: "N years as a software developer"
+  years_by_stack:
+    "Node.js / TypeScript": "N anos"
+  education: "Degree, status"
+  disability: "Não"
+
 tracker:
   backend: "csv"
   csv:

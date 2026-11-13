@@ -172,6 +172,20 @@ def group(rows, key, order=None):
     return out
 
 
+def study_list(sent, top=8):
+    """What to study, after career-ops' upskill.mjs: each application adds
+    (100 - score) / 100 to every gap it names, so a gap that kept the fit low
+    weighs more than one that showed up on a 95% match. Rows without a score
+    count as 0.5."""
+    weight, seen = Counter(), Counter()
+    for r in sent:
+        w = (100 - r["score"]) / 100 if r["score"] is not None else 0.5
+        for g in r["gaps"]:
+            weight[g] += w
+            seen[g] += 1
+    return [{"gap": g, "weight": round(w, 1), "sent": seen[g]} for g, w in weight.most_common(top)]
+
+
 def analyze(raw_rows, applications_dir=None, today=None):
     rows = [enrich(r, applications_dir) for r in raw_rows]
     sent = [r for r in rows if r["state"] not in NOT_SENT | {"withdrew", "unknown"}]
@@ -193,6 +207,7 @@ def analyze(raw_rows, applications_dir=None, today=None):
         "by_month": group(sent, lambda r: (r["data"] or "?")[:7], None),
         "gaps": [{"gap": g, "sent": n, "rejected": gap_rejected[g], "advanced": gap_advanced[g]}
                  for g, n in gap_sent.most_common(10)],
+        "study": study_list(sent),
         "no_score": sum(1 for r in sent if r["score"] is None),
         "score_from_feedback": sum(1 for r in sent if r["score_from"] == "feedback"),
         "shared_local_record": sum(n for n in slugs.values() if n > 1),
@@ -218,6 +233,10 @@ def report(f):
         lines.append("")
     lines.append(f"{'Gap (tag do Notion)':<24} enviadas  rejeitadas  avançaram")
     lines += [f"{g['gap']:<24} {g['sent']:>8}  {g['rejected']:>10}  {g['advanced']:>9}" for g in f["gaps"]]
+    if f.get("study"):
+        lines.append("")
+        lines.append(f"{'O que estudar (peso)':<24} {'peso':>8}  vagas")
+        lines += [f"{s['gap']:<24} {s['weight']:>8}  {s['sent']:>5}" for s in f["study"]]
     lines.append(f"\n{f['no_score']} enviadas sem score; {f['score_from_feedback']} com score lido do Feedback; "
                  f"{f['shared_local_record']} linhas dividem a mesma pasta local (reaplicação).")
     if f["unknown_status"]:

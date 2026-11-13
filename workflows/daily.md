@@ -47,7 +47,20 @@ for q in "${QUERIES[@]}"; do
     -q "$q" --country BR --remote remote --jobage 14 --limit 40 \
     --seniority junior,middle --format json
 done
+
+# Gupy, straight from its public portal API (one call covers a broad term
+# list). It is the source that converts best in our funnel (72% response,
+# 4% advance vs 34% / 0% on LinkedIn — scripts/analyze_outcomes.py), and each
+# result already carries the full description and a structured
+# workplaceType, so it skips both the page fetch and the "Remoto" badge check.
+python3 scripts/gupy_search.py --days 14
 ```
+
+Gupy results come pre-filtered (remote only, title within the ceiling) and
+with `"source": "gupy"`; blocked companies and dedup still apply below. The
+`workplaceType` is the company's own field, so it replaces the logged-in badge
+check, but not the deal-breaker read of the description in apply-batch 2.5:
+one "remote" posting measured on 2026-11-13 still mentioned on-site work.
 
 ⚠️ This is ~9 calls/source per run (2 query axes × 4 LinkedIn pages + 1
 freehire call, vs. ~3 calls/source before) — still personal-use volume, but

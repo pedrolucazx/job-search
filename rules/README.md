@@ -13,6 +13,7 @@ at the repo root for where to start).
 | `ats-verification.md` | Compilation pipeline and ATS verification |
 | `interview-prep.md` | Interview prep based on registered applications |
 | `interview-roteiro.md` | HR/behavioral presentation script + fit analysis template (used by `workflows/interview-prep.md`) |
+| `application-answers.md` | Answering application forms: facts copied from `profile.application_answers`, nothing invented, answers saved per application |
 
 ## Absolute Rules (apply to any candidate)
 

@@ -112,6 +112,11 @@ for json_file in "$DAILY_DIR"/*.json; do
         ATS_FAILS+=("fact_check: ${fact_out:-crashed with no output}")
         ATS_BLOCKED=true
       fi
+      # First person, no em dashes (rules/cv-rules.md) — checked on what the recruiter reads
+      if ! voice_out=$(python3 "$BASE_DIR/scripts/cv_voice.py" "$txt_file" 2>&1); then
+        ATS_FAILS+=("cv_voice: ${voice_out:-crashed with no output}")
+        ATS_BLOCKED=true
+      fi
 
       rm -f "$txt_file"
 

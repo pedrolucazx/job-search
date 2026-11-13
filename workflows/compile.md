@@ -54,6 +54,9 @@ The script itself tells you, per job, whether it archived or not:
   two are signs of invented data. Look at the log lines just above for which.
   - Unsupported number: fix the `.tex` to the profile's real figure (never
     edit the profile to make the check pass), then rerun.
+  - `cv_voice:` an em dash or a third-person verb ("Desenvolveu") in the
+    compiled text (scripts/cv_voice.py). Rewrite in the first person / swap
+    the dash for a comma, colon or parentheses, then rerun.
   - Wrong page count: trim content per `rules/cv-rules.md`, fix the `.tex`
     in `documents/cv/` (the script only moves it on success, so it's still
     there), and rerun `bash scripts/compile-all.sh <date>`.

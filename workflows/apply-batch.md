@@ -41,9 +41,22 @@ Use `rules/job-evaluation.md`, with the full description in hand:
 1. Check `profile/candidate.yaml → preferences.deal_breakers` against the
    full description (not the search tag). If it matches any: **don't
    generate a CV**, mark as excluded in the report with the reason.
-2. Calculate the real score (full gap table). If < 60%: **don't generate a
+2. Read the years of experience the JD asks for — titles never say it, and
+   Gupy rejects on the spot with an eliminatory question on time of
+   experience (Deliver IT asked 5+, rejected immediately):
+
+   ```bash
+   python3 scripts/jd_years.py jd.txt   # {"required": N, "verdict": "within|above|unknown", ...}
+   ```
+
+   `above` on a Gupy posting → **don't generate a CV**, exclude with the
+   quoted evidence. `above` elsewhere → keep going, but add it to the gap
+   table as `partial` (the requirement is real; a human may still read on).
+   `unknown` → most JDs don't say. It is not a guarantee: Deliver IT's 5+
+   years only existed in Gupy's eliminatory question, never in the JD text.
+3. Calculate the real score (full gap table). If < 60%: **don't generate a
    CV**, mark as excluded with the score and the main reason for the drop.
-3. Only proceed to step 3 if it passed both.
+4. Only proceed to step 3 if it passed all of the above.
 
 ### 3. Generate the CV
 
@@ -99,6 +112,13 @@ them):
   "total_requisitos": 10
 }
 ```
+
+### 4.5 Application form questions
+
+If the candidate brings the form's questions (salary, work model, years per
+stack, "why us"), answer them by `rules/application-answers.md`: facts copied
+from `profile/candidate.yaml → application_answers`, open answers written per
+job, and everything saved to `documents/applications/<slug>/form-answers.md`.
 
 ### 5. Partial report
 
