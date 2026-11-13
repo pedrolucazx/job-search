@@ -147,6 +147,19 @@ A self-contained board (stdlib only, no server, no CDN) with one lane per stage,
 from ranked to discarded. Each card carries the fit score and stack, and opens
 the full gap table. It's gitignored — regenerate it whenever you want it fresh.
 
+To learn from the results, not just the inputs (Notion backend, needs
+`NOTION_TOKEN` in `.env` from an internal integration shared with the tracker
+database):
+
+```bash
+python3 scripts/analyze_outcomes.py   # response/advance rate by score band, source, month, gap
+python3 scripts/followup.py           # e-mail applications due a follow-up + ones gone cold
+python3 scripts/followup.py --apply   # also mark the cold ones "Sumiu" in Notion
+```
+
+`analyze_outcomes.py` writes `documents/funnel.json`, and the dashboard shows
+it on top of the board.
+
 ## Commands
 
 | Command | What it does |
@@ -165,7 +178,7 @@ the full gap table. It's gitignored — regenerate it whenever you want it fresh
 | `rules/` | Universal rules: CV, fit score, ATS, interview — no one's personal data |
 | `workflows/` | Operational steps for each command above |
 | `templates/` | Generic LaTeX template (placeholders resolved from the profile) |
-| `scripts/` | Environment setup, dependency installation, profile validation, batch compilation, CSV tracker, application identity and outcome format |
+| `scripts/` | Environment setup, dependency installation, profile validation, batch compilation, CSV tracker, application identity and outcome format, funnel analysis, follow-up, liveness and fact-check gates |
 | `.agents/skills/` | Job search CLIs (LinkedIn, freehire) |
 
 Full detail, including why each folder exists: [AGENTS.md](AGENTS.md).
@@ -178,7 +191,8 @@ python3 -m unittest discover -s tests
 
 Covers `scripts/validate_profile.py`, `scripts/track_append.py`,
 `scripts/check_setup.py`, `scripts/check_roteiro.py`,
-`scripts/application_id.py` and `scripts/outcome.py` (stdlib `unittest`, zero
+`scripts/application_id.py`, `scripts/outcome.py`, `scripts/analyze_outcomes.py`,
+`scripts/followup.py`, `scripts/check_liveness.py` and `scripts/fact_check.py` (stdlib `unittest`, zero
 extra dependency), plus a guard that `profile/candidate.example.yaml` always
 passes validation.
 

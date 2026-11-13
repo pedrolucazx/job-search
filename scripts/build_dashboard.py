@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from outcome import DISCARDED_STATUS, STAGES, parse
+from outcome import ADVANCED, ENDED, STAGES, normalize, parse
 
 ROOT = Path(__file__).resolve().parent.parent
 DRAFT_PDF = "cv_draft.pdf"
@@ -27,13 +27,19 @@ def norm_url(url):
 
 
 def derive_state(outcome):
+    """Map an outcome.md onto a board lane, via the canonical state in outcome.py."""
     if outcome is None:
         return "ranked"
-    if DISCARDED_STATUS.lower() in outcome["status"].lower():
+    state = normalize(outcome["status"])
+    if state == "discarded":
         return "discarded"
-    if outcome["furthest"]:
-        return "closed" if outcome["furthest"] == STAGES[-1] else "interview"
-    if "applied" in outcome["status"].lower():
+    if state in ENDED:  # over, even if it reached an interview first
+        return "ended"
+    if state in ("offer", "hired") or outcome["furthest"] == STAGES[-1]:
+        return "offer"
+    if state in ADVANCED or outcome["furthest"]:
+        return "interview"
+    if state in ("applied", "frozen"):
         return "applied"
     return "compiled"
 
@@ -75,9 +81,19 @@ def load_jobs():
     return list(jobs.values())
 
 
-def render(jobs):
-    data = json.dumps(jobs, ensure_ascii=False)
-    return HTML.replace("__DATA__", data)
+def load_funnel():
+    """documents/funnel.json from analyze_outcomes.py, or None if it was never run."""
+    path = ROOT / "documents" / "funnel.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def render(jobs, funnel=None):
+    def embed(value):  # a "</script>" inside the data must not end the script tag
+        return json.dumps(value, ensure_ascii=False).replace("</", "<\\/")
+    return HTML.replace("__DATA__", embed(jobs)).replace("__FUNNEL__", embed(funnel))
 
 
 def _selfcheck():
@@ -85,7 +101,15 @@ def _selfcheck():
     assert derive_state({"status": "Applied", "furthest": None}) == "applied"
     assert derive_state({"status": "waiting for send confirmation", "furthest": None}) == "compiled"
     assert derive_state({"status": "Applied", "furthest": "Technical interview"}) == "interview"
-    assert derive_state({"status": "Applied", "furthest": "Offer received"}) == "closed"
+    assert derive_state({"status": "Applied", "furthest": "Offer received"}) == "offer"
+    assert derive_state({"status": "Rejected", "furthest": None}) == "ended"
+    assert derive_state({"status": "Applied, Rejected", "furthest": None}) == "ended"
+    assert derive_state({"status": "Rejeitado", "furthest": "Technical interview"}) == "ended"
+    assert derive_state({"status": "Posição fechada", "furthest": None}) == "ended"
+    assert derive_state({"status": "Applied (vaga congelada)", "furthest": None}) == "applied"
+    assert derive_state({"status": "Not applied — não é remoto", "furthest": None}) == "discarded"
+    assert '"rows": 1' in render([], {"rows": 1})
+    assert "</script>" not in render([], {"x": "</script>"}).split("const FUNNEL")[1][:60]
     assert derive_state({"status": "Discarded", "furthest": None}) == "discarded"
     assert derive_state({"status": "Discarded", "furthest": "Phone screen"}) == "discarded"
     assert norm_url("https://x.com/a/?utm=1") == "https://x.com/a"
@@ -129,6 +153,12 @@ HTML = r"""<!doctype html>
   .metric{display:flex;align-items:baseline;gap:6px}
   .metric b{font-size:16px;font-weight:600}
   .metric span{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+  #funnel{padding:14px 20px 0;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-start}
+  #funnel:empty{display:none}
+  #funnel h2{flex-basis:100%;margin:0;font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.07em}
+  .ft{border-collapse:collapse;font-size:12px}
+  .ft th{color:var(--dim);font-weight:500;text-align:left;padding:2px 12px 2px 0}
+  .ft td{padding:2px 12px 2px 0}
   main{display:flex;gap:14px;padding:20px;overflow-x:auto;align-items:flex-start;min-height:60vh}
   .lane{flex:0 0 300px;min-width:300px}
   .lane-h{display:flex;align-items:center;gap:8px;padding:0 4px 10px;
@@ -191,14 +221,16 @@ HTML = r"""<!doctype html>
   <span class="gen mono" id="gen"></span>
   <div class="metrics" id="metrics"></div>
 </header>
+<section id="funnel"></section>
 <main id="board"></main>
 <div id="scrim"></div>
 <aside id="drawer"></aside>
 <script>
 const DATA = __DATA__;
+const FUNNEL = __FUNNEL__;
 const LANES = [
   ["ranked","Ranqueada"],["compiled","CV pronto"],["applied","Aplicada"],
-  ["interview","Entrevista"],["closed","Fechada"],["discarded","Descartada"],
+  ["interview","Entrevista"],["offer","Oferta"],["ended","Encerrada"],["discarded","Descartada"],
 ];
 const C = {full:getComputedStyle(document.documentElement).getPropertyValue("--full"),
   partial:getComputedStyle(document.documentElement).getPropertyValue("--partial"),
@@ -251,7 +283,7 @@ function board(){
 
 function metrics(){
   const m=document.getElementById("metrics");
-  const applied=DATA.filter(j=>["applied","interview","closed"].includes(j.state)).length;
+  const applied=DATA.filter(j=>["applied","interview","offer","ended"].includes(j.state)).length;
   const avg=DATA.length?Math.round(DATA.reduce((s,j)=>s+(j.score||0),0)/DATA.length):0;
   const items=[[DATA.length,"vagas"],[applied,"aplicadas"],
     [DATA.filter(j=>j.state==="interview").length,"entrevistas"],[avg,"score médio"]];
@@ -299,7 +331,19 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape")hideDrawer(); });
 
 const dates=[...new Set(DATA.map(j=>j.data).filter(Boolean))].sort();
 document.getElementById("gen").textContent=dates.length?("· "+dates[dates.length-1]):"";
-metrics(); board();
+function funnel(){
+  const f=document.getElementById("funnel"); if(!FUNNEL)return;
+  const pct=x=>x==null?"–":Math.round(x*100)+"%";
+  f.appendChild(el("h2",null,"Funil (Notion, "+FUNNEL.generated+") · "+FUNNEL.total.sent+" enviadas · resposta "+pct(FUNNEL.total.response_rate)+" · avanço "+pct(FUNNEL.total.advance_rate)));
+  for(const [key,label] of [["by_score","Faixa de score"],["by_source","Fonte"]]){
+    const t=el("table","ft"); const hr=el("tr");
+    [label,"enviadas","resposta","avanço"].forEach(h=>hr.appendChild(el("th",null,h))); t.appendChild(hr);
+    FUNNEL[key].forEach(r=>{ const tr=el("tr");
+      [r.group,r.sent,pct(r.response_rate),pct(r.advance_rate)].forEach(v=>tr.appendChild(el("td","mono",v))); t.appendChild(tr); });
+    f.appendChild(t);
+  }
+}
+metrics(); funnel(); board();
 </script>
 </body>
 </html>
@@ -312,7 +356,7 @@ def main():
         return
     jobs = load_jobs()
     out = ROOT / "dashboard.html"
-    out.write_text(render(jobs), encoding="utf-8")
+    out.write_text(render(jobs, load_funnel()), encoding="utf-8")
     print(f"{len(jobs)} vagas -> {out.relative_to(ROOT)}")
 
 

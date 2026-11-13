@@ -48,8 +48,12 @@ The script itself tells you, per job, whether it archived or not:
 
 - `📦 Archived to ...` — done, nothing else to do for this job.
 - `⚠ Not archived — needs manual review` — either the page count wasn't 1,
-  or an `absent`-status gap literally appeared in the compiled text (a sign
-  of invented data). Look at the log lines just above for which one.
+  an `absent`-status gap literally appeared in the compiled text, or
+  `numbers not found in the profile` (scripts/fact_check.py: a quantity like
+  "5 years" or "90%" that `profile/candidate.yaml` doesn't contain). The last
+  two are signs of invented data. Look at the log lines just above for which.
+  - Unsupported number: fix the `.tex` to the profile's real figure (never
+    edit the profile to make the check pass), then rerun.
   - Wrong page count: trim content per `rules/cv-rules.md`, fix the `.tex`
     in `documents/cv/` (the script only moves it on success, so it's still
     there), and rerun `bash scripts/compile-all.sh <date>`.

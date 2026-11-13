@@ -13,6 +13,19 @@ data.
 
 ### 1. Fetch the posting
 
+First make sure the posting is still open — a CV for a dead posting is pure
+waste:
+
+```bash
+python3 scripts/check_liveness.py <url>   # exit 2 = closed
+```
+
+`closed` → don't fetch, don't generate; report it as excluded ("vaga
+encerrada"). `uncertain` (e-mail, pasted post, fetch failure) → carry on, but
+say so in the report. LinkedIn signals closure by redirecting to
+`trk=expired_jd_redirect`, Gupy by `"status":"closed"` in the page JSON; the
+checker knows both.
+
 If already collected during the scrape with the full description, use it
 directly. Otherwise, WebFetch the URL (see `rules/job-evaluation.md` →
 Fetching the Full Description for the fallback on problematic domains).

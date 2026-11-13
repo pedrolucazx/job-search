@@ -185,5 +185,51 @@ class TestWriteCLI(unittest.TestCase):
         self.assertEqual(outcome.main(["--write", str(self.folder)]), 1)
 
 
+class TestNormalize(unittest.TestCase):
+    # Every option of the Notion "Status" select, as of 2026-11-13.
+    NOTION = {
+        "Aplicado": "applied",
+        "Entrevista cultural": "screening",
+        "Teste técnico": "technical",
+        "Aceito": "hired",
+        "Rejeitado": "rejected",
+        "Posição fechada": "closed",
+        "Congelado": "frozen",
+        "Sumiu": "ghosted",
+        "Desisti": "withdrew",
+        "Referência para colega": "withdrew",
+    }
+    # Status lines found in real outcome.md files, including the messy ones.
+    LOCAL = {
+        "Applied": "applied",
+        "waiting for send confirmation (run workflows/confirm.md)": "compiled",
+        "Not applied — não é remoto": "discarded",
+        "Not applied (posting removed)": "discarded",
+        "Discarded (rejected: ensino superior em andamento)": "discarded",
+        "Discarded": "discarded",
+        "Rejected": "rejected",
+        "Applied, Rejected": "rejected",
+        "Applied (vaga congelada em 2026-11-04)": "frozen",
+        "Aplicado — registrado no Notion em 2026-07-12 (https://x)": "applied",
+        "Posição fechada": "closed",
+    }
+
+    def test_every_notion_status_maps(self):
+        for text, state in self.NOTION.items():
+            self.assertEqual(outcome.normalize(text), state, text)
+
+    def test_local_status_lines_map(self):
+        for text, state in self.LOCAL.items():
+            self.assertEqual(outcome.normalize(text), state, text)
+
+    def test_unknown_and_empty(self):
+        self.assertEqual(outcome.normalize("banana"), "unknown")
+        self.assertEqual(outcome.normalize(None), "unknown")
+
+    def test_groups_are_states(self):
+        for group in (outcome.ADVANCED, outcome.ENDED, outcome.NOT_SENT):
+            self.assertTrue(group <= set(outcome.STATES))
+
+
 if __name__ == "__main__":
     unittest.main()

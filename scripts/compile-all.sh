@@ -107,6 +107,12 @@ for json_file in "$DAILY_DIR"/*.json; do
         fi
       done < <(jq -r '.gaps[]? | select(.status == "absent") | .skill' "$json_file")
 
+      # Every quantity ("4+ years", "80%") must exist in the profile — rule #1 as code
+      if ! fact_out=$(python3 "$BASE_DIR/scripts/fact_check.py" "$txt_file" 2>&1); then
+        ATS_FAILS+=("fact_check: ${fact_out:-crashed with no output}")
+        ATS_BLOCKED=true
+      fi
+
       rm -f "$txt_file"
 
       if [ ${#ATS_FAILS[@]} -eq 0 ]; then
